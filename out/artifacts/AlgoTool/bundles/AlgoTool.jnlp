@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="AlgoTool.jnlp">
+  <information>
+    <title>data parser</title>
+    <vendor>Unknown</vendor>
+    <description>AlgoTool</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="AlgoTool.jar" size="40373" download="eager" />
+    <jar href="lib\core-8.0.1.jar" size="57876" download="eager" />
+    <jar href="lib\datafx-8.0.1.jar" size="261" download="eager" />
+    <jar href="lib\flow-8.0.1.jar" size="68975" download="eager" />
+    <jar href="lib\fontawesomefx-8.9.jar" size="571068" download="eager" />
+    <jar href="lib\jfoenix-8.0.8.jar" size="2708772" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="coin.Main"  name="AlgoTool" />
+  <update check="background"/>
+</jnlp>

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: jfoenix-8.0.8.jar datafx-8.0.1.jar core-8.0.1.jar fontawesom
+ efx-8.9.jar flow-8.0.1.jar
+

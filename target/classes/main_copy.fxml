@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane id="AnchorPane" prefHeight="800.0" prefWidth="1200.0" styleClass="custom-pane"  stylesheets="@styles/dark-theme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="coin.Controller">
+    <left>
+        <Pane prefHeight="624.0" prefWidth="123.0" style="-fx-background-color: #ced4da#ced4da;" BorderPane.alignment="CENTER">
+         <children>
+            <JFXListView fx:id="listView" layoutX="-2.0" prefHeight="624.0" prefWidth="125.0" styleClass="custom-jfx-list-view"/>
+         </children>
+        </Pane>
+    </left>
+    <top>
+        <AnchorPane prefHeight="144.0" prefWidth="1200.0" style="-fx-background-color: #ced4da#ced4da;" BorderPane.alignment="CENTER">
+            <children>
+                <HBox fx:id="topHBox" alignment="CENTER" layoutX="247.0" prefHeight="144.0" prefWidth="832.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label fx:id="title" alignment="CENTER" prefHeight="144.0" prefWidth="685.0" text="select sport data folder">
+                            <font>
+                                <Font size="30.0" />
+                            </font>
+                        </Label>
+                      <JFXButton fx:id="selectDirButton" buttonType="RAISED" onAction="#selectDirView" ripplerFill="WHITE" style="-fx-background-color: #495057#495057;" text="Open Folder" textFill="WHITE">
+                          <font>
+                              <Font size="15.0" />
+                          </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                      </JFXButton>
+                    </children>
+                </HBox>
+             </children>
+        </AnchorPane>
+    </top>
+    <right>
+        <Pane prefHeight="624.0" prefWidth="79.0" style="-fx-background-color: #ced4da#ced4da;" BorderPane.alignment="CENTER" />
+    </right>
+    <bottom>
+        <Pane prefHeight="32.0" prefWidth="1200.0" style="-fx-background-color: #ced4da#ced4da;" BorderPane.alignment="CENTER" />
+    </bottom>
+    <center>
+        <Pane fx:id="centerPane" prefHeight="624.0" prefWidth="1050.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id = "tableView" prefHeight="624.0" prefWidth="1050.0">
+              <columns>
+                <!--TableColumn prefWidth="75.0" text="C1" /-->
+                <!--TableColumn prefWidth="75.0" text="C2" /-->
+              </columns>
+            </TableView>
+         </children>
+      </Pane>
+    </center>
+</BorderPane>

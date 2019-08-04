@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: coin.Main
+Class-Path: lib\jfoenix-8.0.8.jar lib\datafx-8.0.1.jar lib\core-8.0.1.ja
+ r lib\fontawesomefx-8.9.jar lib\flow-8.0.1.jar
+
