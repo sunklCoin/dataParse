@@ -25,7 +25,7 @@ public class Main extends Application {
         Scene mainScene = new Scene(root);
         //mainScene.getStylesheets().add("styles/dark-theme.css");
 
-        primaryStage.setTitle("Sport data analyze");
+        primaryStage.setTitle("sport data parser");
         primaryStage.setScene(mainScene);
 
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();

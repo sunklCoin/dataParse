@@ -65,44 +65,65 @@ public class UserInfoBean {
         this.minHisHR = minHisHR;
     }
 
-    public short getVo2Max() {
-        return vo2Max;
+    public String getVo2Max() {
+        if (vo2Max == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(vo2Max);
     }
 
-    public int getMaxHeartRate() {
-        return maxHeartRate;
+    public String getMaxHeartRate() {
+        if (maxHeartRate == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(maxHeartRate);
     }
 
-    public int getEverydayMaxStep() {
-        return everydayMaxStep;
+    public String getEverydayMaxStep() {
+        if (everydayMaxStep == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(everydayMaxStep);
     }
 
-    public int getEverydayMaxCalorie() {
-        return everydayMaxCalorie;
+    public String getEverydayMaxCalorie() {
+        if (everydayMaxCalorie == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(everydayMaxCalorie);
+        // return everydayMaxCalorie;
     }
 
-    public float getWeight() {
-        return weight;
+    public String getWeight() {
+        if (weight == Float.MIN_VALUE)
+            return "null";
+        return Float.toString(weight);
     }
 
-    public int getMaxHisHR() {
-        return maxHisHR;
+    public String getMaxHisHR() {
+        if (maxHisHR == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(maxHisHR);
     }
 
-    public long getBirthday() {
-        return birthday;
+    public String getBirthday() {
+        if (birthday == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(birthday);
     }
 
-    public short getGender() {
-        return gender;
+    public String getGender() {
+        if (gender == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(gender);
     }
 
-    public short getHeight() {
-        return height;
+    public String getHeight() {
+        if (height == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(height);
     }
 
-    public short getMinHisHR() {
-        return minHisHR;
+    public String getMinHisHR() {
+        if (minHisHR == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(minHisHR);
     }
 
     @Override

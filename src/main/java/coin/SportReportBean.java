@@ -3,12 +3,16 @@ package coin;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static java.math.MathContext.DECIMAL32;
 
 public class SportReportBean {
-    public static final DecimalFormat df2 = new DecimalFormat( "0.00" );
+    public static final DecimalFormat df2 = new DecimalFormat("0.00");
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private long startTime; // 4 bytes  0~3
     private long endTime;   // 4 bytes  4~7
     private long totalTime; // 4 bytes  8~11
@@ -45,40 +49,40 @@ public class SportReportBean {
     private short poolWidth; //
 
     public SportReportBean() {
-        this.startTime                   = Long.MIN_VALUE;
-        this.endTime                     = Long.MIN_VALUE;
-        this.totalTime                   = Long.MIN_VALUE; // 4 bytes
-        this.totalDistance               = Long.MIN_VALUE; // 4 byte
-        this.calorie                     = Integer.MIN_VALUE; // 2 bytes
-        this.maxPace                     = Long.MIN_VALUE; //4 bytes
-        this.minPace                     = Long.MIN_VALUE; // 4 bytes
-        this.maxSpeed                    = Long.MIN_VALUE; //4 bytes
-        this.totalStepCount              = Long.MIN_VALUE; //4 bytes
-        this.maxStrideFreq               = Integer.MIN_VALUE; // 2bytes
-        this.aveHeart                    = Short.MIN_VALUE; //1 bytes
-        this.maxHeart                    = Short.MIN_VALUE; // 1 bytes
-        this.minHeart                    = Short.MIN_VALUE; // 1bytes
-        this.asendTotal                  = "Invalid value"; // 4 bytes
-        this.descendTotal                = "Invalid value"; // 4 bytes
-        this.avgHeight                   = "Invalid value"; // 4 bytes
-        this.maxHeight                   = "Invalid value"; // 4 bytes
-        this.minHeight                   = "Invalid value"; // 4 bytes
-        this.tranEffct                   = "Invalid value"; // 4 bytes
-        this.vo2Max                      = Short.MIN_VALUE; // bytes
-        this.eneryConsum                 = Short.MIN_VALUE; //1bytes
-        this.preRecoverTime              = Integer.MIN_VALUE; // 2bytes
-        this.heartRateLimitDuration      = Long.MIN_VALUE; // 4 bytes
-        this.anaerobicEnduranceDuration  = Long.MIN_VALUE; // 4 bytes
-        this.aerobicEnduranceDuration    = Long.MIN_VALUE; // 4 bytes
-        this.fatBurningTime              = Long.MIN_VALUE; //4 bytes
-        this.warmupTime                  = Long.MIN_VALUE; // 4 bytes
-        this.totalStrokes                = Integer.MIN_VALUE; //2 bytes
-        this.mainSwimType                = Short.MIN_VALUE; //1 bytes
-        this.maxStrokeFreq               = Short.MIN_VALUE; //1 bytes
-        this.turnAround                  = Integer.MIN_VALUE; //2 bytes
-        this.aveSwolf                    = Integer.MIN_VALUE; // 2bytes
-        this.bestSwolf                   = Integer.MIN_VALUE; // 2bytes
-        this.poolWidth                   = Short.MIN_VALUE; // 1bytes
+        this.startTime = Long.MIN_VALUE;
+        this.endTime = Long.MIN_VALUE;
+        this.totalTime = Long.MIN_VALUE; // 4 bytes
+        this.totalDistance = Long.MIN_VALUE; // 4 byte
+        this.calorie = Integer.MIN_VALUE; // 2 bytes
+        this.maxPace = Long.MIN_VALUE; //4 bytes
+        this.minPace = Long.MIN_VALUE; // 4 bytes
+        this.maxSpeed = Long.MIN_VALUE; //4 bytes
+        this.totalStepCount = Long.MIN_VALUE; //4 bytes
+        this.maxStrideFreq = Integer.MIN_VALUE; // 2bytes
+        this.aveHeart = Short.MIN_VALUE; //1 bytes
+        this.maxHeart = Short.MIN_VALUE; // 1 bytes
+        this.minHeart = Short.MIN_VALUE; // 1bytes
+        this.asendTotal = "Invalid value"; // 4 bytes
+        this.descendTotal = "Invalid value"; // 4 bytes
+        this.avgHeight = "Invalid value"; // 4 bytes
+        this.maxHeight = "Invalid value"; // 4 bytes
+        this.minHeight = "Invalid value"; // 4 bytes
+        this.tranEffct = "Invalid value"; // 4 bytes
+        this.vo2Max = Short.MIN_VALUE; // bytes
+        this.eneryConsum = Short.MIN_VALUE; //1bytes
+        this.preRecoverTime = Integer.MIN_VALUE; // 2bytes
+        this.heartRateLimitDuration = Long.MIN_VALUE; // 4 bytes
+        this.anaerobicEnduranceDuration = Long.MIN_VALUE; // 4 bytes
+        this.aerobicEnduranceDuration = Long.MIN_VALUE; // 4 bytes
+        this.fatBurningTime = Long.MIN_VALUE; //4 bytes
+        this.warmupTime = Long.MIN_VALUE; // 4 bytes
+        this.totalStrokes = Integer.MIN_VALUE; //2 bytes
+        this.mainSwimType = Short.MIN_VALUE; //1 bytes
+        this.maxStrokeFreq = Short.MIN_VALUE; //1 bytes
+        this.turnAround = Integer.MIN_VALUE; //2 bytes
+        this.aveSwolf = Integer.MIN_VALUE; // 2bytes
+        this.bestSwolf = Integer.MIN_VALUE; // 2bytes
+        this.poolWidth = Short.MIN_VALUE; // 1bytes
     }
 
     public String getAsendTotal() {
@@ -105,116 +109,176 @@ public class SportReportBean {
         return tranEffct;
     }
 
-    public int getAveSwolf() {
-        return aveSwolf;
+    public String getAveSwolf() {
+        if (aveSwolf == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(aveSwolf);
     }
 
-    public int getBestSwolf() {
-        return bestSwolf;
+    public String getBestSwolf() {
+        if (bestSwolf == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(bestSwolf);
     }
 
-    public int getCalorie() {
-        return calorie;
+    public String getCalorie() {
+        if (calorie == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(calorie);
     }
 
-    public int getMaxStrideFreq() {
-        return maxStrideFreq;
+    public String getMaxStrideFreq() {
+        if (maxStrideFreq == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(maxStrideFreq);
     }
 
-    public int getPreRecoverTime() {
-        return preRecoverTime;
+    public String getPreRecoverTime() {
+        if (preRecoverTime == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(preRecoverTime);
     }
 
-    public long getAnaerobicEnduranceDuration() {
-        return anaerobicEnduranceDuration;
+    public String getAnaerobicEnduranceDuration() {
+        if (anaerobicEnduranceDuration == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(anaerobicEnduranceDuration);
     }
 
-    public int getTotalStrokes() {
-        return totalStrokes;
+    public String getTotalStrokes() {
+        if (totalStrokes == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(totalStrokes);
     }
 
-    public int getTurnAround() {
-        return turnAround;
+    public String getTurnAround() {
+        if (turnAround == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(turnAround);
     }
 
-    public long getAerobicEnduranceDuration() {
-        return aerobicEnduranceDuration;
+    public String getAerobicEnduranceDuration() {
+        if (aerobicEnduranceDuration == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(aerobicEnduranceDuration);
     }
 
-    public long getEndTime() {
-        return endTime;
+    public String getEndTime() {
+        if (endTime == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(endTime * 1000);
+        String tempStr = df.format(temp);
+        return Long.toString(endTime) + "\n" + tempStr;
     }
 
-    public long getFatBurningTime() {
-        return fatBurningTime;
+    public String getFatBurningTime() {
+        if (fatBurningTime == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(fatBurningTime);
     }
 
-    public long getHeartRateLimitDuration() {
-        return heartRateLimitDuration;
+    public String getHeartRateLimitDuration() {
+        if (heartRateLimitDuration == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(heartRateLimitDuration);
     }
 
-    public long getMaxPace() {
-        return maxPace;
+    public String getMaxPace() {
+        if (maxPace == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(maxPace);
     }
 
-    public long getMaxSpeed() {
-        return maxSpeed;
+    public String getMaxSpeed() {
+        if (maxSpeed == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(maxSpeed);
     }
 
-    public long getMinPace() {
-        return minPace;
+    public String getMinPace() {
+        if (minPace == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(minPace);
     }
 
-    public long getStartTime() {
-        return startTime;
+    public String getStartTime() {
+        if (startTime == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(startTime * 1000);
+        String tempStr = df.format(temp);
+        return Long.toString(startTime) + "\n" + tempStr;
     }
 
-    public long getTotalDistance() {
-        return totalDistance;
+    public String getTotalDistance() {
+        if (totalDistance == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(totalDistance);
     }
 
-    public long getTotalStepCount() {
-        return totalStepCount;
+    public String getTotalStepCount() {
+        if (totalStepCount == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(totalStepCount);
     }
 
-    public long getTotalTime() {
-        return totalTime;
+    public String getTotalTime() {
+        if (totalTime == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(totalTime);
     }
 
-    public long getWarmupTime() {
-        return warmupTime;
+    public String getWarmupTime() {
+        if (warmupTime == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(warmupTime);
     }
 
-    public short getAveHeart() {
-        return aveHeart;
+    public String getAveHeart() {
+        if (aveHeart == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(aveHeart);
     }
 
-    public short getEneryConsum() {
-        return eneryConsum;
+    public String getEneryConsum() {
+        if (eneryConsum == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(eneryConsum);
     }
 
-    public short getMainSwimType() {
-        return mainSwimType;
+    public String getMainSwimType() {
+        if (mainSwimType == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(mainSwimType);
     }
 
-    public short getMaxHeart() {
-        return maxHeart;
+    public String getMaxHeart() {
+        if (maxHeart == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(maxHeart);
     }
 
-    public short getMaxStrokeFreq() {
-        return maxStrokeFreq;
+    public String getMaxStrokeFreq() {
+        if (maxStrokeFreq == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(maxStrokeFreq);
     }
 
-    public short getMinHeart() {
-        return minHeart;
+    public String getMinHeart() {
+        if (minHeart == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(minHeart);
     }
 
-    public short getVo2Max() {
-        return vo2Max;
+    public String getVo2Max() {
+        if (vo2Max == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(vo2Max);
     }
 
-    public short getPoolWidth() {
-        return poolWidth;
+    public String getPoolWidth() {
+        if (poolWidth == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(poolWidth);
     }
 
     public void setAerobicEnduranceDuration(long aerobicEnduranceDuration) {
@@ -229,7 +293,7 @@ public class SportReportBean {
         // BigDecimal bigDecimal = new BigDecimal(asendTotal, new MathContext(3, RoundingMode.HALF_EVEN));
         // String newVal = df2.format(asendTotal);
         //System.out.println(newVal);
-        this.asendTotal =  df2.format(asendTotal); //Double.parseDouble(newVal);
+        this.asendTotal = df2.format(asendTotal); //Double.parseDouble(newVal);
         //System.out.println(this.asendTotal);
     }
 
@@ -364,39 +428,39 @@ public class SportReportBean {
 
     @Override
     public String toString() {
-        return  "startTime                 = " + startTime                  + " \n" +
-                "endTime                   = " + endTime                    + " \n" +
-                "totalTime                 = " + totalTime                  + " \n" +
-                "totalDistance             = " + totalDistance              + " \n" +
-                "calorie                   = " + calorie                    + " \n" +
-                "maxPace                   = " + maxPace                    + " \n" +
-                "minPace                   = " + minPace                    + " \n" +
-                "maxSpeed                  = " + maxSpeed                   + " \n" +
-                "totalStepCount            = " + totalStepCount             + " \n" +
-                "maxStrideFreq             = " + maxStrideFreq              + " \n" +
-                "aveHeart                  = " + aveHeart                   + " \n" +
-                "maxHeart                  = " + maxHeart                   + " \n" +
-                "minHeart                  = " + minHeart                   + " \n" +
-                "asendTotal                = " + asendTotal                 + " \n" +
-                "descendTotal              = " + descendTotal               + " \n" +
-                "avgHeight                 = " + avgHeight                  + " \n" +
-                "maxHeight                 = " + maxHeight                  + " \n" +
-                "minHeight                 = " + minHeight                  + " \n" +
-                "tranEffct                 = " + tranEffct                  + " \n" +
-                "vo2Max                    = " + vo2Max                     + " \n" +
-                "eneryConsum               = " + eneryConsum                + " \n" +
-                "preRecoverTime            = " + preRecoverTime             + " \n" +
-                "heartRateLimitDuration    = " + heartRateLimitDuration     + " \n" +
+        return "startTime                 = " + startTime + " \n" +
+                "endTime                   = " + endTime + " \n" +
+                "totalTime                 = " + totalTime + " \n" +
+                "totalDistance             = " + totalDistance + " \n" +
+                "calorie                   = " + calorie + " \n" +
+                "maxPace                   = " + maxPace + " \n" +
+                "minPace                   = " + minPace + " \n" +
+                "maxSpeed                  = " + maxSpeed + " \n" +
+                "totalStepCount            = " + totalStepCount + " \n" +
+                "maxStrideFreq             = " + maxStrideFreq + " \n" +
+                "aveHeart                  = " + aveHeart + " \n" +
+                "maxHeart                  = " + maxHeart + " \n" +
+                "minHeart                  = " + minHeart + " \n" +
+                "asendTotal                = " + asendTotal + " \n" +
+                "descendTotal              = " + descendTotal + " \n" +
+                "avgHeight                 = " + avgHeight + " \n" +
+                "maxHeight                 = " + maxHeight + " \n" +
+                "minHeight                 = " + minHeight + " \n" +
+                "tranEffct                 = " + tranEffct + " \n" +
+                "vo2Max                    = " + vo2Max + " \n" +
+                "eneryConsum               = " + eneryConsum + " \n" +
+                "preRecoverTime            = " + preRecoverTime + " \n" +
+                "heartRateLimitDuration    = " + heartRateLimitDuration + " \n" +
                 "anaerobicEnduranceDuration= " + anaerobicEnduranceDuration + " \n" +
-                "aerobicEnduranceDuration  = " + aerobicEnduranceDuration   + " \n" +
-                "fatBurningTime            = " + fatBurningTime             + " \n" +
-                "warmupTime                = " + warmupTime                 + " \n" +
-                "totalStrokes              = " + totalStrokes               + " \n" +
-                "mainSwimType              = " + mainSwimType               + " \n" +
-                "maxStrokeFreq             = " + maxStrokeFreq              + " \n" +
-                "turnAround                = " + turnAround                 + " \n" +
-                "aveSwolf                  = " + aveSwolf                   + " \n" +
-                "bestSwolf                 = " + bestSwolf                  + " \n" +
-                "poolWidth                 = " + poolWidth                  + " \n";
+                "aerobicEnduranceDuration  = " + aerobicEnduranceDuration + " \n" +
+                "fatBurningTime            = " + fatBurningTime + " \n" +
+                "warmupTime                = " + warmupTime + " \n" +
+                "totalStrokes              = " + totalStrokes + " \n" +
+                "mainSwimType              = " + mainSwimType + " \n" +
+                "maxStrokeFreq             = " + maxStrokeFreq + " \n" +
+                "turnAround                = " + turnAround + " \n" +
+                "aveSwolf                  = " + aveSwolf + " \n" +
+                "bestSwolf                 = " + bestSwolf + " \n" +
+                "poolWidth                 = " + poolWidth + " \n";
     }
 }

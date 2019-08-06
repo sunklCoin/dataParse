@@ -685,7 +685,7 @@ public class DataConverTool {
         if (byteSize == 0) {
             return null;
         }
-
+        System.out.println("file " + file);
         switch (fileInfoBean.getSportType()) {
             case OUTDOOR_RUNNING:
             case OUTDOOR_WALKING:
@@ -748,7 +748,7 @@ public class DataConverTool {
                         //sportRecordType1Bean.setDateTime(dtStr);
                         sportRecordType1Bean.setIncreaseCalorie((short)((fileContent[0] & 0x00f0) >> 4));
                         sportRecordType1Bean.setIncreaseStep((short) (fileContent[0] & 0x000f));
-                        sportRecordType1Bean.setHeartRate(fileContent[1]);
+                        sportRecordType1Bean.setHeartRate((short) (fileContent[1] & 0x00ff));
                         sportRecordType1Bean.setIntergerKM((short) ((fileContent[2] & 0x0080) >> 7));
                         sportRecordType1Bean.setHeightType((short) ((fileContent[2] & 0x0040) >> 6));
                         int h = fileContent[2] & 0x003f;
@@ -804,7 +804,7 @@ public class DataConverTool {
                         //sportRecordType1Bean.setDateTime(dtStr);
                         sportRecordType1Bean.setIncreaseCalorie((short) ((fileContent[0] & 0x00f0) >> 4));
                         sportRecordType1Bean.setIncreaseStep((short) (fileContent[0] & 0x000f));
-                        sportRecordType1Bean.setHeartRate(fileContent[1]);
+                        sportRecordType1Bean.setHeartRate((short) (fileContent[1] & 0x00ff));
                         int km = fileContent[2] & 0x00ff;
                         sportRecordType1Bean.setIncreaseKm((float) (km / 10));
                         arrayList.add(sportRecordType1Bean);
@@ -861,7 +861,7 @@ public class DataConverTool {
                         sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
                         //sportRecordType1Bean.setDateTime(dtStr);
                         sportRecordType1Bean.setIncreaseCalorie((short) (fileContent[0] & 0x00ff));
-                        sportRecordType1Bean.setHeartRate(fileContent[1]);
+                        sportRecordType1Bean.setHeartRate((short) (fileContent[1] & 0x00ff));
                         sportRecordType1Bean.setIntergerKM((short) ((fileContent[2] & 0x0080) >> 7));
                         sportRecordType1Bean.setHeightType((short) ((fileContent[2] & 0x0040) >> 6));
                         int h = fileContent[2] & 0x3f;
@@ -912,8 +912,8 @@ public class DataConverTool {
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
                         sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
                         //sportRecordType1Bean.setDateTime(resumeTimeStamp);
-                        sportRecordType1Bean.setHeartRate((short)(fileContent[0] & 0x00ff));
-                        sportRecordType1Bean.setIncreaseCalorie((short) (fileContent[1] & 0x00ff));
+                        sportRecordType1Bean.setHeartRate((short) (fileContent[0] & 0xff));
+                        sportRecordType1Bean.setIncreaseCalorie((short) (fileContent[1] & 0xff));
                         arrayList.add(sportRecordType1Bean);
                     }
                 }

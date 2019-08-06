@@ -235,8 +235,8 @@ public class Controller implements Initializable {
     }
 
     private void setFileInfoByBean(FileInfoBean mFileInfoBean) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
-        Date date = new Date(mFileInfoBean.getTimeStamp());
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(mFileInfoBean.getTimeStamp() * 1000);
         String time = df.format(date);
         String fileInfo = "File name : " + mFileInfoBean.getFileName() + "; Time Stamp : " + time;
         setFileInfo(fileInfo);
@@ -354,8 +354,10 @@ public class Controller implements Initializable {
         tableView.getColumns().clear();
         TableColumn startTime = new TableColumn("运动开始时间");
         startTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("startTime"));
+
         TableColumn endTime = new TableColumn("运动结束时间");
         endTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("endTime"));
+
         TableColumn totalTime = new TableColumn("运动总时长");
         totalTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalTime"));
         TableColumn totalDistance = new TableColumn("总里程");
@@ -497,17 +499,17 @@ public class Controller implements Initializable {
         TableColumn resumeTimeStamp = new TableColumn("恢复运动时的时间戳");
         resumeTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("resumeTimeStamp"));
 
-        TableColumn dtString = new TableColumn("恢复运动时的时间");
+        // TableColumn dtString = new TableColumn("恢复运动时的时间");
         //dateTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("dateTime"));
 
-        dtString.setCellValueFactory(new PropertyValueFactory<String,String>("dtString"));
+        // dtString.setCellValueFactory(new PropertyValueFactory<String,String>("dtString"));
         TableColumn heartRate = new TableColumn("心率");
         heartRate.setCellValueFactory(new PropertyValueFactory<Object, Object>("heartRate"));
         TableColumn increaseCalorie = new TableColumn("新增卡路里");
         increaseCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseCalorie"));
         tableView.getColumns().add(recordCnt);
         tableView.getColumns().add(resumeTimeStamp);
-        tableView.getColumns().add(dtString);
+        //tableView.getColumns().add(dtString);
         tableView.getColumns().add(heartRate);
         tableView.getColumns().add(increaseCalorie);
         switch (sportType) {

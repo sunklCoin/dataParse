@@ -1,6 +1,11 @@
 package coin;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DailyReportBean {
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private long    totalStepCount;     // 4 bytes  0~3
     private int     totalCalorie;       // 2 bytes
     private short   currHeartRate;      // 1 bytes
@@ -31,56 +36,99 @@ public class DailyReportBean {
         this.standFlag           = Integer.MIN_VALUE ;
     }
 
-    public long getTotalStepCount() {
-        return totalStepCount;
+    public String getTotalStepCount() {
+        /*return totalStepCount;*/
+        if (totalStepCount == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(totalStepCount);
     }
 
-    public int getStandFlag() {
-        return standFlag;
+    public String getStandFlag() {
+        /*return standFlag;*/
+        if (standFlag == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(standFlag);
     }
 
-    public int getTotalCalorie() {
-        return totalCalorie;
+    public String getTotalCalorie() {
+        /*return totalCalorie;*/
+        if (totalCalorie == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(totalCalorie);
     }
 
-    public long getTimeOfmaxHeartRate() {
-        return timeOfmaxHeartRate;
+    public String getTimeOfmaxHeartRate() {
+        /*return timeOfmaxHeartRate;*/
+        if (timeOfmaxHeartRate == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(timeOfmaxHeartRate * 1000);
+        String tempStr = df.format(temp);
+        return Long.toString(timeOfmaxHeartRate) + "\n" + tempStr;
     }
 
-    public long getTimeOfminHeartRate() {
-        return timeOfminHeartRate;
+    public String getTimeOfminHeartRate() {
+        /*return timeOfminHeartRate;*/
+        if (timeOfminHeartRate == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(timeOfminHeartRate * 1000);
+        String tempStr = df.format(temp);
+        return Long.toString(timeOfminHeartRate) + "\n" + tempStr;
     }
 
-    public short getAvgHeartRate() {
-        return avgHeartRate;
+    public String getAvgHeartRate() {
+        /*return avgHeartRate;*/
+        if (avgHeartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(avgHeartRate);
     }
 
-    public short getAvgPressure() {
-        return avgPressure;
+    public String getAvgPressure() {
+        /*return avgPressure;*/
+        if (avgPressure == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(avgPressure);
     }
 
-    public short getCurrHeartRate() {
-        return currHeartRate;
+    public String getCurrHeartRate() {
+        /*return currHeartRate;*/
+        if (currHeartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(currHeartRate);
     }
 
-    public short getMaxHeartRate() {
-        return maxHeartRate;
+    public String getMaxHeartRate() {
+        /*return maxHeartRate;*/
+        if (maxHeartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(maxHeartRate);
     }
 
-    public short getMaxPressure() {
-        return maxPressure;
+    public String getMaxPressure() {
+        /*return maxPressure;*/
+        if (maxPressure == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(maxPressure);
     }
 
-    public short getMinHeartRate() {
-        return minHeartRate;
+    public String getMinHeartRate() {
+        /*return minHeartRate;*/
+        if (minHeartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(minHeartRate);
     }
 
-    public short getMinPressure() {
-        return minPressure;
+    public String getMinPressure() {
+        /*return minPressure;*/
+        if (minPressure == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(minPressure);
     }
 
-    public short getRestingHeartRate() {
-        return restingHeartRate;
+    public String getRestingHeartRate() {
+        /*return restingHeartRate;*/
+        if (restingHeartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(restingHeartRate);
     }
 
     public void setTotalStepCount(long totalStepCount) {

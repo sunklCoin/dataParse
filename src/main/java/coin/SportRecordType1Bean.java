@@ -8,6 +8,7 @@ import java.util.Date;
 
 public class SportRecordType1Bean {
     public static final DecimalFormat df2 = new DecimalFormat( "0.00" );
+    public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String initAltitude;
     private long recordCnt;
     private long resumeTimeStamp;
@@ -38,7 +39,6 @@ public class SportRecordType1Bean {
     }
 
     public void setDtString(long timeStamp) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         Date date = new Date(resumeTimeStamp);
         //String dtStr = df.format(date);
         this.dtString = df.format(date);
@@ -72,12 +72,18 @@ public class SportRecordType1Bean {
         return initAltitude;
     }
 
-    public long getRecordCnt() {
-        return recordCnt;
+    public String getRecordCnt() {
+        if (recordCnt == Long.MIN_VALUE)
+            return "null";
+        return Long.toString(recordCnt);
     }
 
-    public long getResumeTimeStamp() {
-        return resumeTimeStamp;
+    public String getResumeTimeStamp() {
+        if (resumeTimeStamp == Long.MIN_VALUE)
+            return "null";
+        Date date = new Date(resumeTimeStamp * 1000);
+        String dtStr = df.format(date);
+        return Long.toString(resumeTimeStamp) + "\n" + dtStr;
     }
 
     public String getDtString() {
@@ -112,31 +118,45 @@ public class SportRecordType1Bean {
         this.intergerKM = intergerKM;
     }
 
-    public short getHeartRate() {
-        return heartRate;
+    public String getHeartRate() {
+        if (heartRate == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(heartRate);
     }
 
-    public float getHeight() {
-        return height;
+    public String getHeight() {
+        if (height == Float.MIN_VALUE)
+            return "null";
+        return Float.toString(height);
     }
 
-    public short getHeightType() {
-        return heightType;
+    public String getHeightType() {
+        if (heightType == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(heightType);
     }
 
-    public short getIncreaseCalorie() {
-        return increaseCalorie;
+    public String getIncreaseCalorie() {
+        if (increaseCalorie == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(increaseCalorie);
     }
 
-    public short getIncreaseStep() {
-        return increaseStep;
+    public String getIncreaseStep() {
+        if (increaseStep == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(increaseStep);
     }
 
-    public short getIntergerKM() {
-        return intergerKM;
+    public String getIntergerKM() {
+        if (intergerKM == Short.MIN_VALUE)
+            return "null";
+        return Short.toString(intergerKM);
     }
 
-    public float getIncreaseKm() {
-        return increaseKm;
+    public String getIncreaseKm() {
+        if (increaseKm == Float.MIN_VALUE)
+            return "null";
+        return Float.toString(increaseKm);
     }
 }
