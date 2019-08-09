@@ -189,7 +189,7 @@ public class DataConverTool {
         sportReportBean.setMinPace(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 22, 26)));
 
-        sportReportBean.setMaxSpeed(ByteUtil.getUnsignedInt(
+        sportReportBean.setMaxSpeed(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 26, 30)));
 
         sportReportBean.setTotalStepCount(ByteUtil.getUnsignedInt(
@@ -207,22 +207,22 @@ public class DataConverTool {
         sportReportBean.setMinHeart(ByteUtil.getUnsignedChar(
                 Arrays.copyOfRange(fileContent, 38, 39)));
 
-        sportReportBean.setAsendTotal(ByteUtil.getUnsignedInt(
+        sportReportBean.setAsendTotal(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 39, 43)));
 
-        sportReportBean.setDescendTotal(ByteUtil.getUnsignedInt(
+        sportReportBean.setDescendTotal(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 43, 47)));
 
-        sportReportBean.setAvgHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setAvgHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 47, 51)));
 
-        sportReportBean.setMaxHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setMaxHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 51, 55)));
 
-        sportReportBean.setMinHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setMinHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 55, 59)));
 
-        sportReportBean.setTranEffct(ByteUtil.getUnsignedInt(
+        sportReportBean.setTranEffct(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 59, 63)));
 
         sportReportBean.setVo2Max(ByteUtil.getUnsignedChar(
@@ -290,8 +290,7 @@ public class DataConverTool {
         sportReportBean.setMinHeart(ByteUtil.getUnsignedChar(
                 Arrays.copyOfRange(fileContent, 34, 35)));
 
-        sportReportBean.setTranEffct(ByteUtil.getUnsignedInt(
-                Arrays.copyOfRange(fileContent, 35, 39)));
+        sportReportBean.setTranEffct(ByteUtil.getFloat(Arrays.copyOfRange(fileContent, 35, 39)));
 
         sportReportBean.setVo2Max(ByteUtil.getUnsignedChar(
                 Arrays.copyOfRange(fileContent, 39, 40)));
@@ -343,7 +342,7 @@ public class DataConverTool {
         sportReportBean.setMinPace(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 22, 26)));
 
-        sportReportBean.setMaxSpeed(ByteUtil.getUnsignedInt(
+        sportReportBean.setMaxSpeed(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 26, 30)));
 
 
@@ -356,22 +355,22 @@ public class DataConverTool {
         sportReportBean.setMinHeart(ByteUtil.getUnsignedChar(
                 Arrays.copyOfRange(fileContent, 32, 33)));
 
-        sportReportBean.setAsendTotal(ByteUtil.getUnsignedInt(
+        sportReportBean.setAsendTotal(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 33, 37)));
 
-        sportReportBean.setDescendTotal(ByteUtil.getUnsignedInt(
+        sportReportBean.setDescendTotal(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 37, 41)));
 
-        sportReportBean.setAvgHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setAvgHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 41, 45)));
 
-        sportReportBean.setMaxHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setMaxHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 45, 49)));
 
-        sportReportBean.setMinHeight(ByteUtil.getUnsignedInt(
+        sportReportBean.setMinHeight(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 49, 53)));
 
-        sportReportBean.setTranEffct(ByteUtil.getUnsignedInt(
+        sportReportBean.setTranEffct(ByteUtil.getFloat(
                 Arrays.copyOfRange(fileContent, 53, 57)));
 
         sportReportBean.setVo2Max(ByteUtil.getUnsignedChar(
@@ -421,7 +420,7 @@ public class DataConverTool {
         sportReportBean.setMinHeart(ByteUtil.getUnsignedChar(singleBytebuff));
 
         fourBytebuff = Arrays.copyOfRange(fileContent, 17, 21);   // 4 bytes
-        sportReportBean.setTranEffct(ByteUtil.getUnsignedInt(fourBytebuff));
+        sportReportBean.setTranEffct(ByteUtil.getFloat(fourBytebuff));
 
         singleBytebuff = Arrays.copyOfRange(fileContent, 21, 22);  // 1 byte
         sportReportBean.setEneryConsum(ByteUtil.getUnsignedChar(singleBytebuff));

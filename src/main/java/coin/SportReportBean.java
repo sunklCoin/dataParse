@@ -20,7 +20,7 @@ public class SportReportBean {
     private int calorie; // 2 bytes 16 ~ 17
     private long maxPace; //4 bytes 18~21
     private long minPace; // 4 bytes 22 ~ 25
-    private long maxSpeed; //4 bytes 26 ~ 29
+    private float maxSpeed; //4 bytes 26 ~ 29
     private long totalStepCount; //4 bytes 30 ~ 33
     private int maxStrideFreq; // 2bytes 34 ~ 35
     private short aveHeart; //1 bytes 35
@@ -56,7 +56,7 @@ public class SportReportBean {
         this.calorie = Integer.MIN_VALUE; // 2 bytes
         this.maxPace = Long.MIN_VALUE; //4 bytes
         this.minPace = Long.MIN_VALUE; // 4 bytes
-        this.maxSpeed = Long.MIN_VALUE; //4 bytes
+        this.maxSpeed = Float.MIN_VALUE; //4 bytes
         this.totalStepCount = Long.MIN_VALUE; //4 bytes
         this.maxStrideFreq = Integer.MIN_VALUE; // 2bytes
         this.aveHeart = Short.MIN_VALUE; //1 bytes
@@ -190,9 +190,10 @@ public class SportReportBean {
     }
 
     public String getMaxSpeed() {
-        if (maxSpeed == Long.MIN_VALUE)
+        if (maxSpeed == Float.MIN_VALUE)
             return "null";
-        return Long.toString(maxSpeed);
+        String maxSpeedStr = df2.format(maxSpeed);
+        return maxSpeedStr;
     }
 
     public String getMinPace() {
@@ -289,21 +290,20 @@ public class SportReportBean {
         this.anaerobicEnduranceDuration = anaerobicEnduranceDuration;
     }
 
-    public void setAsendTotal(double asendTotal) {
-        // BigDecimal bigDecimal = new BigDecimal(asendTotal, new MathContext(3, RoundingMode.HALF_EVEN));
-        // String newVal = df2.format(asendTotal);
-        //System.out.println(newVal);
-        this.asendTotal = df2.format(asendTotal); //Double.parseDouble(newVal);
-        //System.out.println(this.asendTotal);
+    public void setMaxSpeed(float maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 
     public void setAveHeart(short aveHeart) {
         this.aveHeart = aveHeart;
     }
 
-    public void setAvgHeight(double avgHeight) {
-        //String newVal = df2.format(avgHeight);
-        this.avgHeight = df2.format(avgHeight);//Double.parseDouble(newVal);
+    public void setAsendTotal(float asendTotal) {
+        // BigDecimal bigDecimal = new BigDecimal(asendTotal, new MathContext(3, RoundingMode.HALF_EVEN));
+        // String newVal = df2.format(asendTotal);
+        //System.out.println(newVal);
+        this.asendTotal = df2.format(asendTotal); //Double.parseDouble(newVal);
+        //System.out.println(this.asendTotal);
     }
 
     public void setAveSwolf(int aveSwolf) {
@@ -318,9 +318,9 @@ public class SportReportBean {
         this.bestSwolf = bestSwolf;
     }
 
-    public void setDescendTotal(double descendTotal) {
-//        String newVal = df2.format(descendTotal);
-        this.descendTotal = df2.format(descendTotal);//Double.parseDouble(newVal);
+    public void setAvgHeight(float avgHeight) {
+        //String newVal = df2.format(avgHeight);
+        this.avgHeight = df2.format(avgHeight);//Double.parseDouble(newVal);
     }
 
     public void setEndTime(long endTime) {
@@ -347,17 +347,18 @@ public class SportReportBean {
         this.mainSwimType = mainSwimType;
     }
 
-    public void setMaxHeight(double maxHeight) {
-        //String newVal = df2.format(maxHeight);
-        this.maxHeight = df2.format(maxHeight);//Double.parseDouble(newVal);
+    public void setDescendTotal(float descendTotal) {
+//        String newVal = df2.format(descendTotal);
+        this.descendTotal = df2.format(descendTotal);//Double.parseDouble(newVal);
     }
 
     public void setMaxPace(long maxPace) {
         this.maxPace = maxPace;
     }
 
-    public void setMaxSpeed(long maxSpeed) {
-        this.maxSpeed = maxSpeed;
+    public void setMaxHeight(float maxHeight) {
+        //String newVal = df2.format(maxHeight);
+        this.maxHeight = df2.format(maxHeight);//Double.parseDouble(newVal);
     }
 
     public void setMaxStrideFreq(int maxStrideFreq) {
@@ -372,7 +373,7 @@ public class SportReportBean {
         this.minHeart = minHeart;
     }
 
-    public void setMinHeight(double minHeight) {
+    public void setMinHeight(float minHeight) {
         //String newVal = df2.format(minHeight);
         this.minHeight = df2.format(minHeight);//Double.parseDouble(newVal);
     }
@@ -409,7 +410,7 @@ public class SportReportBean {
         this.totalStrokes = totalStrokes;
     }
 
-    public void setTranEffct(double tranEffct) {
+    public void setTranEffct(float tranEffct) {
         //String newVal = df2.format(tranEffct);
         this.tranEffct = df2.format(tranEffct);//Double.parseDouble(newVal);
     }
