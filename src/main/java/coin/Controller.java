@@ -3,28 +3,27 @@ package coin;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 
-import javax.swing.event.ListSelectionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
@@ -39,7 +38,7 @@ public class Controller implements Initializable {
     private static final int SPORT_REPORT = 3;
     private static final int GPS_FILE = 4;
     private static final int USER_PROFILE = 5;
-
+    private static final int DAILY_DISTRIBUTE = 6;
     public Controller() {
     }
 
@@ -147,7 +146,9 @@ public class Controller implements Initializable {
                 // 判断是否为 文件
             } else if (f.isFile()) {
                 if (f.getName().contains("report") || f.getName().contains("record") ||
-                        f.getName().contains("gps") || f.getName().contains("profile")) {
+                        f.getName().contains("gps") || f.getName().contains("profile") ||
+                        f.getName().contains("distribute") || f.getName().contains("dsleep") ||
+                        f.getName().contains("nsleep")) {
                     listFile.add(f.getPath());
                     //listFile.add(f.getAbsolutePath());
                     dataList.add(f.getPath());
@@ -172,6 +173,10 @@ public class Controller implements Initializable {
 
             if (filePathName.contains("report")) {
                 return DAILY_REPORT;
+            }
+
+            if (filePathName.contains("distribute")) {
+                return DAILY_DISTRIBUTE;
             }
         } else if (filePathName.contains("sport")) {
             if (filePathName.contains("record")) {
@@ -222,6 +227,9 @@ public class Controller implements Initializable {
             }
             break;
             case GPS_FILE:
+                ArrayList<GpsDataBean> mGpsDataBeanList = dataConverTool.parseGpsDataFile(fileName);
+                setFileInfoByBean(dataConverTool.getFileInfo());
+                loadGpsData(mGpsDataBeanList, dataConverTool.getFileInfo().getSportType());
                 break;
             case USER_PROFILE: {
                 UserInfoBean mUserInfoBean = dataConverTool.parseUserProfile(fileName);
@@ -229,6 +237,13 @@ public class Controller implements Initializable {
                 setFileInfoByBean(mFileInfoBean);
                 System.out.println(mUserInfoBean.toString());
                 loadUserProfileData(mUserInfoBean);
+            }
+            break;
+            case DAILY_DISTRIBUTE: {
+                DailyDistributeBean mDailyDistributeBean = dataConverTool.parseDailyDistribute(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadDailyDistributeData(mDailyDistributeBean);
             }
             break;
         }
@@ -499,19 +514,11 @@ public class Controller implements Initializable {
         TableColumn resumeTimeStamp = new TableColumn("恢复运动时的时间戳");
         resumeTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("resumeTimeStamp"));
 
-        // TableColumn dtString = new TableColumn("恢复运动时的时间");
-        //dateTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("dateTime"));
-
-        // dtString.setCellValueFactory(new PropertyValueFactory<String,String>("dtString"));
         TableColumn heartRate = new TableColumn("心率");
         heartRate.setCellValueFactory(new PropertyValueFactory<Object, Object>("heartRate"));
         TableColumn increaseCalorie = new TableColumn("新增卡路里");
         increaseCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseCalorie"));
-        tableView.getColumns().add(recordCnt);
-        tableView.getColumns().add(resumeTimeStamp);
-        //tableView.getColumns().add(dtString);
-        tableView.getColumns().add(heartRate);
-        tableView.getColumns().add(increaseCalorie);
+
         switch (sportType) {
             case DataConverTool.OUTDOOR_RUNNING:
             case DataConverTool.CROSS_COUNTRY:
@@ -534,7 +541,7 @@ public class Controller implements Initializable {
 
                 TableColumn increaseKm = new TableColumn("新增里程");
                 increaseKm.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseKm"));
-                tableView.getColumns().addAll(initAltitude,
+                tableView.getColumns().addAll(recordCnt, resumeTimeStamp, heartRate, increaseCalorie, initAltitude,
                         increaseStep, intergerKM,
                         heightType, height, increaseKm);
             }
@@ -545,7 +552,8 @@ public class Controller implements Initializable {
 
                 TableColumn increaseKm = new TableColumn("新增里程");
                 increaseKm.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseKm"));
-                tableView.getColumns().addAll(increaseStep, increaseKm);
+                tableView.getColumns().addAll(recordCnt, resumeTimeStamp, heartRate, increaseCalorie,
+                        increaseStep, increaseKm);
             }
             break;
             case DataConverTool.OUTDOOR_RIDING: {
@@ -561,12 +569,114 @@ public class Controller implements Initializable {
                 TableColumn height = new TableColumn("高度变化");
                 height.setCellValueFactory(new PropertyValueFactory<Object, Object>("height"));
 
-                tableView.getColumns().addAll(initAltitude, intergerKM, heightType, height);
+                tableView.getColumns().addAll(recordCnt, resumeTimeStamp, heartRate, increaseCalorie,
+                        initAltitude, intergerKM, heightType, height);
             }
             break;
             case DataConverTool.INDOOR_BICYCLE:
             case DataConverTool.FREE_TRAIAING:
-            break;
+                tableView.getColumns().addAll(recordCnt, resumeTimeStamp, heartRate, increaseCalorie);
+                break;
+            case DataConverTool.INDOOR_SWIMMING:
+            case DataConverTool.OPEN_WATER_SWIMMING:
+                TableColumn swRecordType = new TableColumn("数据类型");
+                swRecordType.setCellValueFactory(new PropertyValueFactory<Object, Object>("swRecordType"));
+
+                TableColumn swTimeStamp = new TableColumn("时间戳");
+                swTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTimeStamp"));
+
+                TableColumn swMainStroke = new TableColumn("本小节主泳姿");
+                swMainStroke.setCellValueFactory(new PropertyValueFactory<Object, Object>("swMainStroke"));
+
+                TableColumn swCurrBarPace = new TableColumn("本小节配速（秒/百米）");
+                swCurrBarPace.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarPace"));
+
+                TableColumn swCurrBarSwolf = new TableColumn("本小节swolf");
+                swCurrBarSwolf.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarSwolf"));
+
+                TableColumn swTotalKm = new TableColumn("累计里程（米）");
+                swTotalKm.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalKm"));
+
+                TableColumn swTotalCalorie = new TableColumn("累计卡路里（千卡）");
+                swTotalCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalCalorie"));
+
+                TableColumn swTotalStroke = new TableColumn("累计划水次数（次）");
+                swTotalStroke.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalStroke"));
+
+                TableColumn swTotalTurn = new TableColumn("累计转身次数（次）");
+                swTotalTurn.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalTurn"));
+
+                TableColumn swCurrBarFq = new TableColumn("本小节划频（次/分钟）");
+                swCurrBarFq.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarFq"));
+
+                TableColumn swCurrBarUnKnowStrokeCnt = new TableColumn("本小节未知泳姿划水次数（次）");
+                swCurrBarUnKnowStrokeCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarUnKnowStrokeCnt"));
+
+                TableColumn swCurrBarBreastCnt = new TableColumn("本小节蛙泳划水次数（次）");
+                swCurrBarBreastCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarBreastCnt"));
+
+                TableColumn swCurrBarFreeCnt = new TableColumn("本小节自由泳划水次数（次）");
+                swCurrBarFreeCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarFreeCnt"));
+
+                TableColumn swCurrBarBackCnt = new TableColumn("本小节仰泳划水次数（次）");
+                swCurrBarBackCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarBackCnt"));
+
+                TableColumn swCurrBarButterflyCnt = new TableColumn("本小节蝶泳划水次数（次）");
+                swCurrBarButterflyCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("swCurrBarButterflyCnt"));
+
+                tableView.getColumns().addAll(recordCnt, resumeTimeStamp, swRecordType, swTimeStamp, swMainStroke,
+                        swCurrBarPace, swCurrBarSwolf, swTotalKm, swTotalCalorie, swTotalStroke, swTotalTurn,
+                        swCurrBarFq, swCurrBarUnKnowStrokeCnt, swCurrBarBreastCnt, swCurrBarFreeCnt,
+                        swCurrBarBackCnt, swCurrBarButterflyCnt);
+                break;
         }
+    }
+
+    private void loadGpsData(ArrayList<GpsDataBean> mGpsDataBeanList, int sportType) {
+        list.clear();
+        //list.add(mDailyRecordBean);
+        list.addAll(mGpsDataBeanList);
+        tableView.getColumns().clear();
+
+        TableColumn timeStamp = new TableColumn("Unix时间戳");
+        timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
+
+        TableColumn lon = new TableColumn("经度");
+        lon.setCellValueFactory(new PropertyValueFactory<Object, Object>("lon"));
+
+        TableColumn lat = new TableColumn("纬度");
+        lat.setCellValueFactory(new PropertyValueFactory<Object, Object>("lat"));
+
+        tableView.getColumns().add(timeStamp);
+        tableView.getColumns().add(lon);
+        tableView.getColumns().add(lat);
+    }
+
+
+    private void loadDailyDistributeData(DailyDistributeBean mDailyDistributeBean) {
+        list.clear();
+        list.add(mDailyDistributeBean);
+        tableView.getColumns().clear();
+        TableColumn seriousPressDur = new TableColumn("压力-重度时长");
+        seriousPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("seriousPressDur"));
+        TableColumn moderatePressDur = new TableColumn("压力-中度时长");
+        moderatePressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("moderatePressDur"));
+        TableColumn mildPressDur = new TableColumn("压力-轻度时长");
+        mildPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("mildPressDur"));
+        TableColumn relaxPressDur = new TableColumn("压力-放松时长");
+        relaxPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("relaxPressDur"));
+        TableColumn limitHeartDur = new TableColumn("心率-极限时长");
+        limitHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("limitHeartDur"));
+        TableColumn anaerobicHeartDur = new TableColumn("心率-无氧耐力时长");
+        anaerobicHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("anaerobicHeartDur"));
+        TableColumn aerobcHeartDur = new TableColumn("心率-有氧耐力时长");
+        aerobcHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("aerobcHeartDur"));
+        TableColumn fatBurningHeartDur = new TableColumn("心率-燃脂时长");
+        fatBurningHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("fatBurningHeartDur"));
+        TableColumn warmUpHeartDur = new TableColumn("心率-热身时长");
+        warmUpHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("warmUpHeartDur"));
+
+        tableView.getColumns().addAll(seriousPressDur, moderatePressDur, mildPressDur, relaxPressDur, limitHeartDur,
+                anaerobicHeartDur, aerobcHeartDur, fatBurningHeartDur, warmUpHeartDur);
     }
 }

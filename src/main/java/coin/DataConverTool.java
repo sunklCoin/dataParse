@@ -1,10 +1,6 @@
 package coin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +27,8 @@ public class DataConverTool {
     public static final int SPORT_RECORD_TYPE2_DYNAMIC_BUFF_SIZE = 3;
     public static final int SPORT_RECORD_TYPE3_DYNAMIC_BUFF_SIZE = 3;
     public static final int SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE = 2;
+    public static final int SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE = 10;
+    public static final int SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE = 14;
 
     public static final int DAILY_RECORD_HAS_SLEEP_FLAG_BIT = 15;
     public static final int DAILY_RECORD_EXCEPTION_HEART_FLAG_BIT = 14;
@@ -39,6 +37,8 @@ public class DataConverTool {
 
     public static final int DAILY_RECORD_SLEEP_MODE_SHIFT_BIT = 13;
     public static final int DAILY_RECORD_ENERGY_STATE_SHIFT_BIT = 11;
+    public static final int GPS_DATA_FIX_SIZE = 12;
+    public static final int DAILY_DISTRIBUTE_FILE_SIZE = 18;
 
     public static final int OUTDOOR_RUNNING = 1;
     public static final int OUTDOOR_WALKING = 2;
@@ -54,6 +54,7 @@ public class DataConverTool {
     public static final int SPORT_FILE_TYPE = 0;
     public static final int DAILY_FILE_TYPE = 1;
     public static final int USER_PROFILE_TYPE = 2;
+    public static final int GPS_DATA_TYPE = 3;
 
     private FileInfoBean fileInfo;
 
@@ -700,6 +701,7 @@ public class DataConverTool {
                 return parseSportRecordType4(file);
             case INDOOR_SWIMMING:
             case OPEN_WATER_SWIMMING:
+                return parseSportRecordType5(file);
             default:
                 return null;
         }
@@ -745,7 +747,7 @@ public class DataConverTool {
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
                         sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
                         //sportRecordType1Bean.setDateTime(dtStr);
-                        sportRecordType1Bean.setIncreaseCalorie((short)((fileContent[0] & 0x00f0) >> 4));
+                        sportRecordType1Bean.setIncreaseCalorie((short) ((fileContent[0] & 0x00f0) >> 4));
                         sportRecordType1Bean.setIncreaseStep((short) (fileContent[0] & 0x000f));
                         sportRecordType1Bean.setHeartRate((short) (fileContent[1] & 0x00ff));
                         sportRecordType1Bean.setIntergerKM((short) ((fileContent[2] & 0x0080) >> 7));
@@ -919,6 +921,169 @@ public class DataConverTool {
                 // sportRecordType1Bean.setDetailDataBeanArrayList(detailDataBeanArrayList);
                 // arrayList.add(sportRecordType1Bean);
             } while ((fileSize - startPos) > SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE);
+            raf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
+
+    public ArrayList<GpsDataBean> parseGpsDataFile(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, GPS_DATA_TYPE);
+        final int byteSize = GPS_DATA_FIX_SIZE;
+        ArrayList<GpsDataBean> arrayList = new ArrayList<GpsDataBean>();
+        if (byteSize == 0) {
+            return null;
+        }
+        byte[] fileContent = new byte[byteSize];
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            while (raf.read(fileContent) > 0) {
+                GpsDataBean gpsDataBean = new GpsDataBean();
+                long timeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4));
+                gpsDataBean.setTimeStamp(timeStamp);
+                long lon = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 4, 8));
+                int temp = (int) lon & 0x7ff00000 >> 30;
+                int first = ((lon & 0x80000000 >> 31) == 0 ? temp : -temp);
+                int sec = (int) (lon & 0x000fffff);
+                double val = (first + (double) sec / 1000000);
+                gpsDataBean.setLon(val);
+                long lat = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 8, 12));
+                temp = (int) lat & 0x7ff00000 >> 30;
+                first = ((lat & 0x80000000 >> 31) == 0 ? temp : -temp);
+                sec = (int) (lat & 0x000fffff);
+                val = (first + (double) sec / 1000000);
+                gpsDataBean.setLat(val);
+
+                arrayList.add(gpsDataBean);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
+
+
+    public DailyDistributeBean parseDailyDistribute(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, USER_PROFILE_TYPE);
+        final int byteSize = DAILY_DISTRIBUTE_FILE_SIZE;
+        if (byteSize == 0) {
+            return null;
+        }
+        File dataFile = new File(file);
+        byte[] fileContent = new byte[byteSize];
+        try {
+            FileInputStream in = new FileInputStream(dataFile);
+            in.read(fileContent);
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DailyDistributeBean mDailyDistributeBean = parseDailyDistributeData(fileContent);
+        return mDailyDistributeBean;
+    }
+
+    private DailyDistributeBean parseDailyDistributeData(final byte[] fileContent) {
+        DailyDistributeBean mDailyDistributeBean = new DailyDistributeBean();
+
+        byte[] doubleBytebuff = Arrays.copyOfRange(fileContent, 0, 2); // 2 byte
+        mDailyDistributeBean.setSeriousPressDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 0, 2)));
+
+        mDailyDistributeBean.setModeratePressDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 2, 4)));
+
+        mDailyDistributeBean.setMildPressDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 4, 6)));
+
+        mDailyDistributeBean.setRelaxPressDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 6, 8)));
+
+        mDailyDistributeBean.setLimitHeartDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 8, 10)));
+
+        mDailyDistributeBean.setAnaerobicHeartDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 10, 12)));
+
+        mDailyDistributeBean.setAerobcHeartDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 12, 14)));
+
+        mDailyDistributeBean.setFatBurningHeartDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 14, 16)));
+
+        mDailyDistributeBean.setWarmUpHeartDur(
+                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 16, 18)));
+        return mDailyDistributeBean;
+    }
+
+    // include indoor swimming / open water swimming
+    private ArrayList<SportRecordType1Bean> parseSportRecordType5(String file) {
+        ArrayList<SportRecordType1Bean> arrayList = new ArrayList<SportRecordType1Bean>();
+        final int buffSize = SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE;
+        byte[] fileContent = new byte[buffSize];
+        File reportFile = new File(file);
+        int readRet = 0;
+        final long fileSize = reportFile.length();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+        int startPos = 0;
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            do {
+                byte[] headBuff = new byte[8];
+                readRet = raf.read(headBuff);
+                long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 0, 4));
+                long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
+                startPos += readRet;
+                System.out.println("startPos " + startPos + " filePointer " + raf.getFilePointer());
+                if (recordeCnt * SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE >= fileSize) {
+                    break;
+                }
+                for (int step = 0; step < recordeCnt; step++) {
+                    readRet = raf.read(fileContent);
+                    if (readRet >= SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE) {
+                        startPos += readRet;
+                        System.out.println("raf.read ret " + readRet);
+                        SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
+                        sportRecordType1Bean.setRecordCnt(recordeCnt);
+                        sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
+                        sportRecordType1Bean.setSwRecordType(fileContent[0]);
+                        sportRecordType1Bean.setSwTimeStamp(
+                                ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 1, 5)));
+                        sportRecordType1Bean.setSwMainStroke(fileContent[5]);
+                        sportRecordType1Bean.setSwCurrBarPace(
+                                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 6, 8)));
+                        sportRecordType1Bean.setSwCurrBarSwolf(
+                                ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 8, 10)));
+                        if (fileContent[0] == 0x00) {
+                            byte[] leftBuff = new byte[SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE];
+                            readRet = raf.read(leftBuff);
+                            if (readRet >= SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE) {
+                                startPos += readRet;
+                                System.out.println("raf.read ret " + readRet);
+                                sportRecordType1Bean.setSwTotalKm(
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 0, 2)));
+                                sportRecordType1Bean.setSwTotalCalorie(
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 2, 4)));
+                                sportRecordType1Bean.setSwTotalStroke(
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 4, 6)));
+                                sportRecordType1Bean.setSwTotalTurn(
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 6, 8)));
+                                sportRecordType1Bean.setSwCurrBarFq(fileContent[8]);
+                                sportRecordType1Bean.setSwCurrBarUnKnowStrokeCnt(fileContent[9]);
+                                sportRecordType1Bean.setSwCurrBarBreastCnt(fileContent[10]);
+                                sportRecordType1Bean.setSwCurrBarFreeCnt(fileContent[11]);
+                                sportRecordType1Bean.setSwCurrBarBackCnt(fileContent[12]);
+                                sportRecordType1Bean.setSwCurrBarButterflyCnt(fileContent[13]);
+                            }
+                        }
+                        arrayList.add(sportRecordType1Bean);
+                    }
+                }
+            } while ((fileSize - startPos) > SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE);
             raf.close();
         } catch (IOException e) {
             e.printStackTrace();
