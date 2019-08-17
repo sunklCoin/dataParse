@@ -720,15 +720,12 @@ public class DataConverTool {
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
-            byte[] temp = new byte[4];
-            readRet = raf.read(temp);
-            final float initAltitude = ByteUtil.getFloat(temp);
-            startPos += readRet;
             do {
-                byte[] headBuff = new byte[8];
+                byte[] headBuff = new byte[12];
                 readRet = raf.read(headBuff);
-                long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 0, 4));
-                long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
+                final float initAltitude = ByteUtil.getFloat(Arrays.copyOfRange(headBuff, 0, 4));
+                long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
+                long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 8, 12));
                 System.out.println("recordeCnt " + recordeCnt + " resumeTimeStamp " + resumeTimeStamp);
                 startPos += readRet;
                 Date date = new Date(resumeTimeStamp);
@@ -832,16 +829,12 @@ public class DataConverTool {
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
-            byte[] temp = new byte[4];
-            readRet = raf.read(temp);
-            startPos += readRet;
-            final float initAltitude = ByteUtil.getFloat(temp);
             do {
-                byte[] headBuff = new byte[8];
+                byte[] headBuff = new byte[12];
                 readRet = raf.read(headBuff);
-                startPos += readRet;
-                long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 0, 4));
-                long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
+                final float initAltitude = ByteUtil.getFloat(Arrays.copyOfRange(headBuff, 0, 4));
+                long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
+                long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 8, 12));
                 startPos += readRet;
                 System.out.println("startPos " + startPos + " filePointer " + raf.getFilePointer());
                 Date date = new Date(resumeTimeStamp);
