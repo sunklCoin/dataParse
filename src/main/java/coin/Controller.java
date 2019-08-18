@@ -39,6 +39,9 @@ public class Controller implements Initializable {
     private static final int GPS_FILE = 4;
     private static final int USER_PROFILE = 5;
     private static final int DAILY_DISTRIBUTE = 6;
+    private static final int DAY_SLEEP = 7;
+    private static final int NIGHT_SLEEP = 8;
+    private static final int AVERAGE_DATA = 9;
     public Controller() {
     }
 
@@ -148,7 +151,7 @@ public class Controller implements Initializable {
                 if (f.getName().contains("report") || f.getName().contains("record") ||
                         f.getName().contains("gps") || f.getName().contains("profile") ||
                         f.getName().contains("distribute") || f.getName().contains("dsleep") ||
-                        f.getName().contains("nsleep")) {
+                        f.getName().contains("nsleep") || f.getName().contains("average")) {
                     listFile.add(f.getPath());
                     //listFile.add(f.getAbsolutePath());
                     dataList.add(f.getPath());
@@ -192,6 +195,12 @@ public class Controller implements Initializable {
             }
         } else if (filePathName.contains("profile")) {
             return USER_PROFILE;
+        } else if (filePathName.contains("dsleep")) {
+            return DAY_SLEEP;
+        } else if (filePathName.contains("nsleep")) {
+            return NIGHT_SLEEP;
+        } else if (filePathName.contains("average")) {
+            return AVERAGE_DATA;
         }
 
         return UNKNOWN_FILE;
@@ -246,6 +255,28 @@ public class Controller implements Initializable {
                 loadDailyDistributeData(mDailyDistributeBean);
             }
             break;
+            case DAY_SLEEP: {
+                ArrayList<DailySleepBean> mDailySleepList = dataConverTool.parseDailySleepBean(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadDaySleepData(mDailySleepList);
+            }
+            break;
+            case NIGHT_SLEEP: {
+                ArrayList<NightSleepBean> mNightSleepList = dataConverTool.parseNightSleepBean(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadNightSleepData(mNightSleepList);
+            }
+            break;
+            case AVERAGE_DATA: {
+                AverageDataBean mNAverageData = dataConverTool.parseAverageData(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadAverageData(mNAverageData);
+            }
+            break;
+
         }
     }
 
@@ -678,5 +709,99 @@ public class Controller implements Initializable {
 
         tableView.getColumns().addAll(seriousPressDur, moderatePressDur, mildPressDur, relaxPressDur, limitHeartDur,
                 anaerobicHeartDur, aerobcHeartDur, fatBurningHeartDur, warmUpHeartDur);
+    }
+
+
+    private void loadDaySleepData(ArrayList<DailySleepBean> mDaySleepList) {
+        list.clear();
+        list.add(mDaySleepList);
+        tableView.getColumns().clear();
+        TableColumn sleepDuration = new TableColumn("白天睡眠累计时长(分钟)");
+        sleepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepDuration"));
+        TableColumn changeOfTimeStamp = new TableColumn("睡眠模式变动的时间戳");
+        changeOfTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("changeOfTimeStamp"));
+        TableColumn sleepMode = new TableColumn("变动过后的睡眠模式");
+        sleepMode.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
+
+        tableView.getColumns().addAll(sleepDuration, changeOfTimeStamp, sleepMode);
+    }
+
+    private void loadNightSleepData(ArrayList<NightSleepBean> mNightSleepList) {
+        list.clear();
+        list.add(mNightSleepList);
+        tableView.getColumns().clear();
+        TableColumn totalSleepScore = new TableColumn("夜间睡眠总分");
+        totalSleepScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalSleepScore"));
+
+        TableColumn totalSleepQualityScore = new TableColumn("夜间睡眠质量得分");
+        totalSleepQualityScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalSleepQualityScore"));
+
+        TableColumn totalSleepDurationScore = new TableColumn("夜间睡眠时长得分");
+        totalSleepDurationScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalSleepDurationScore"));
+
+        TableColumn sleepSummary = new TableColumn("夜间睡眠总结");
+        sleepSummary.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepSummary"));
+
+        TableColumn sleepAdvise = new TableColumn("夜间睡眠建议");
+        sleepAdvise.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepAdvise"));
+
+        TableColumn sleepDuration = new TableColumn("夜间睡眠时长(分钟)");
+        sleepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepDuration"));
+
+        TableColumn aSleepTimeStamp = new TableColumn("夜间睡眠入睡时间");
+        aSleepTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("aSleepTimeStamp"));
+
+        TableColumn wakeupTimeStamp = new TableColumn("夜间睡眠醒来时间");
+        wakeupTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("wakeupTimeStamp"));
+
+        TableColumn sleepResumeScore = new TableColumn("夜间睡眠恢复得分");
+        sleepResumeScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepResumeScore"));
+
+        TableColumn sleepUneasyScore = new TableColumn("夜间睡眠不安得分");
+        sleepUneasyScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepUneasyScore"));
+
+        TableColumn wakeupCount = new TableColumn("夜间睡眠清醒次数(次)");
+        wakeupCount.setCellValueFactory(new PropertyValueFactory<Object, Object>("wakeupCount"));
+
+        TableColumn deepDuration = new TableColumn("夜间睡眠-深睡时长(分钟)");
+        deepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("deepDuration"));
+
+        TableColumn lightDuration = new TableColumn("夜间睡眠-浅睡时长(次)");
+        lightDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("lightDuration"));
+
+        TableColumn eyeMoveDuration = new TableColumn("夜间睡眠-眼动时长(次)");
+        eyeMoveDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("eyeMoveDuration"));
+
+        TableColumn soberDuration = new TableColumn("夜间睡眠-清醒时长(次)");
+        soberDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("soberDuration"));
+
+        TableColumn changeOfTimeStamp = new TableColumn("睡眠模式变动的时间戳");
+        changeOfTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("changeOfTimeStamp"));
+
+        TableColumn sleepMode = new TableColumn("变动过后的睡眠模式");
+        sleepMode.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
+
+        tableView.getColumns().addAll(totalSleepScore, totalSleepQualityScore, totalSleepDurationScore, sleepSummary,
+                sleepAdvise, sleepDuration, aSleepTimeStamp, wakeupTimeStamp, sleepResumeScore, sleepUneasyScore,
+                wakeupCount, deepDuration, lightDuration, eyeMoveDuration, soberDuration, changeOfTimeStamp, sleepMode);
+    }
+
+
+    private void loadAverageData(AverageDataBean mAverageData) {
+        list.clear();
+        list.add(mAverageData);
+        tableView.getColumns().clear();
+        TableColumn timeStamp = new TableColumn("时间戳");
+        timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
+
+        TableColumn timeZone = new TableColumn("时区");
+        timeZone.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeZone"));
+
+        TableColumn averagePress = new TableColumn("当日平均压力");
+        averagePress.setCellValueFactory(new PropertyValueFactory<Object, Object>("averagePress"));
+
+        TableColumn resetingHR = new TableColumn("当日静息心率(次/分钟)");
+        resetingHR.setCellValueFactory(new PropertyValueFactory<Object, Object>("resetingHR"));
+        tableView.getColumns().addAll(timeStamp, timeZone, averagePress, resetingHR);
     }
 }

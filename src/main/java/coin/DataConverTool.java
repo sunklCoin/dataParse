@@ -55,6 +55,8 @@ public class DataConverTool {
     public static final int DAILY_FILE_TYPE = 1;
     public static final int USER_PROFILE_TYPE = 2;
     public static final int GPS_DATA_TYPE = 3;
+    public static final int SLEEP_DATA_TYPE = 4;
+    public static final int AVERAGE_DATA_TYPE = 4;
 
     private FileInfoBean fileInfo;
 
@@ -1083,4 +1085,139 @@ public class DataConverTool {
         }
         return arrayList;
     }
+
+    public ArrayList<DailySleepBean> parseDailySleepBean(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, SLEEP_DATA_TYPE);
+        ArrayList<DailySleepBean> arrayList = new ArrayList<DailySleepBean>();
+        byte[] fileContent = new byte[5];
+        File reportFile = new File(file);
+        int readRet = 0;
+        final long fileSize = reportFile.length();
+        if (fileSize <= 0) {
+            return null;
+        }
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            byte[] headBuff = new byte[2];
+            readRet = raf.read(headBuff);
+            if (readRet < 2) {
+                return null;
+            }
+            int sleepDur = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 0, 2));
+
+            while ((readRet = raf.read(fileContent)) >= 5) {
+                System.out.println("raf.read ret " + readRet);
+                DailySleepBean dailySleepBean = new DailySleepBean();
+                dailySleepBean.setSleepDuration(sleepDur);
+                dailySleepBean.setChangeOfTimeStamp(
+                        ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                dailySleepBean.setSleepMode(fileContent[4]);
+                arrayList.add(dailySleepBean);
+            }
+            raf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
+
+    public ArrayList<NightSleepBean> parseNightSleepBean(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, SLEEP_DATA_TYPE);
+        ArrayList<NightSleepBean> arrayList = new ArrayList<NightSleepBean>();
+        byte[] fileContent = new byte[5];
+        File reportFile = new File(file);
+        int readRet = 0;
+        final long fileSize = reportFile.length();
+        if (fileSize <= 0) {
+            return null;
+        }
+
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            byte[] headBuff = new byte[26];
+            readRet = raf.read(headBuff);
+            if (readRet < 26) {
+                return null;
+            }
+            short totalSleepScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 0, 1));
+            short totalSleepQualityScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 1, 2));
+            short totalSleepDurationScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 2, 3));
+            short sleepSummary = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 3, 4));
+            short sleepAdvise = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 4, 5));
+
+            int sleepDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 5, 7));
+            long aSleepTimeStamp = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 7, 11));
+            long wakeupTimeStamp = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 11, 15));
+
+            short sleepResumeScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 15, 16));
+            short sleepUneasyScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 16, 17));
+            short wakeupCount = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 17, 18));
+
+            int deepDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 18, 20));
+            int lightDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 20, 22));
+            int eyeMoveDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 22, 24));
+            int soberDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 24, 26));
+
+            while ((readRet = raf.read(fileContent)) >= 5) {
+                System.out.println("raf.read ret " + readRet);
+                NightSleepBean nightSleepBean = new NightSleepBean();
+                nightSleepBean.setTotalSleepScore(totalSleepScore);
+                nightSleepBean.setTotalSleepQualityScore(totalSleepQualityScore);
+                nightSleepBean.setTotalSleepDurationScore(totalSleepDurationScore);
+                nightSleepBean.setSleepSummary(sleepSummary);
+                nightSleepBean.setSleepAdvise(sleepAdvise);
+                nightSleepBean.setSleepDuration(sleepDuration);
+                nightSleepBean.setaSleepTimeStamp(aSleepTimeStamp);
+                nightSleepBean.setWakeupTimeStamp(wakeupTimeStamp);
+                nightSleepBean.setSleepResumeScore(sleepResumeScore);
+                nightSleepBean.setSleepUneasyScore(sleepUneasyScore);
+                nightSleepBean.setWakeupCount(wakeupCount);
+                nightSleepBean.setDeepDuration(deepDuration);
+                nightSleepBean.setLightDuration(lightDuration);
+                nightSleepBean.setEyeMoveDuration(eyeMoveDuration);
+                nightSleepBean.setSoberDuration(soberDuration);
+                nightSleepBean.setChangeOfTimeStamp(
+                        ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                nightSleepBean.setSleepMode(fileContent[4]);
+                arrayList.add(nightSleepBean);
+            }
+            raf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
+
+
+    public AverageDataBean parseAverageData(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, AVERAGE_DATA_TYPE);
+        byte[] fileContent = new byte[7];
+        File reportFile = new File(file);
+        int readRet = 0;
+        final long fileSize = reportFile.length();
+        if (fileSize <= 0) {
+            return null;
+        }
+        AverageDataBean averageDataBean = new AverageDataBean();
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            readRet = raf.read(fileContent);
+            System.out.println("raf.read ret " + readRet);
+            if (readRet < 7) {
+                return null;
+            }
+            averageDataBean.setTimeStamp(ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+            averageDataBean.setTimeZone(fileContent[4]);
+            averageDataBean.setAveragePress(fileContent[5]);
+            averageDataBean.setResetingHR(fileContent[6]);
+            raf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return averageDataBean;
+    }
+
 }
