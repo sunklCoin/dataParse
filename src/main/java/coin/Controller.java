@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class Controller implements Initializable {
 
@@ -283,6 +284,10 @@ public class Controller implements Initializable {
     private void setFileInfoByBean(FileInfoBean mFileInfoBean) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(mFileInfoBean.getTimeStamp() * 1000);
+        mFileInfoBean.getTimeZone();
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(mFileInfoBean.getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String time = df.format(date);
         String fileInfo = "File name : " + mFileInfoBean.getFileName() + "; Time Stamp : " + time;
         setFileInfo(fileInfo);

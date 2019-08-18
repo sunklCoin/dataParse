@@ -60,10 +60,29 @@ public class DataConverTool {
 
     private FileInfoBean fileInfo;
 
+    private int parseTimeZone(String dir[]) {
+        if (dir == null)
+            return Integer.MIN_VALUE;
+        for (int i = 0; i < dir.length; i++) {
+            if (dir[i].length() < 4 && (dir[i].startsWith("p") || dir[i].startsWith("n"))) {
+                char preFix = dir[i].charAt(0);
+                String timeZoneStr = dir[i].substring(1);
+                System.out.println("preFix " + preFix + " timeZoneStr " + timeZoneStr);
+                int realTimeZone = Integer.valueOf(timeZoneStr);
+                if (preFix == 'n')
+                    realTimeZone = -realTimeZone;
+                return realTimeZone;
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
     private FileInfoBean ParserFileInfo(String file, int fileType) {
         String destFile = file;
+        int tz = Integer.MIN_VALUE;
         if (file.contains("\\")) {
             String temp[] = file.split("\\\\");
+            tz = parseTimeZone(temp);
             String fileName = temp[temp.length - 1];
             destFile = fileName;
         }
@@ -81,6 +100,7 @@ public class DataConverTool {
             fileInfoBean.setSportType(Integer.parseInt(fileFormat[index--]));
         }
         fileInfoBean.setTimeStamp(Long.parseLong(fileFormat[index]));
+        fileInfoBean.setTimeZone(tz);
         this.fileInfo = fileInfoBean;
         return fileInfoBean;
     }

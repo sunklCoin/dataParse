@@ -6,6 +6,7 @@ public class FileInfoBean {
     private int sportType;
     private String fileType;
     private String version;
+    private int timeZone;
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -25,6 +26,14 @@ public class FileInfoBean {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public int getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(int timeZone) {
+        this.timeZone = timeZone;
     }
 
     public int getSportType() {
