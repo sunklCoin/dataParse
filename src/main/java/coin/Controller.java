@@ -181,6 +181,18 @@ public class Controller implements Initializable {
             if (filePathName.contains("distribute")) {
                 return DAILY_DISTRIBUTE;
             }
+
+            if (filePathName.contains("dsleep")) {
+                return DAY_SLEEP;
+            }
+
+            if (filePathName.contains("nsleep")) {
+                return NIGHT_SLEEP;
+            }
+
+            if (filePathName.contains("average")) {
+                return AVERAGE_DATA;
+            }
         } else if (filePathName.contains("sport")) {
             if (filePathName.contains("record")) {
                 return SPORT_RECORD;
@@ -195,14 +207,7 @@ public class Controller implements Initializable {
             }
         } else if (filePathName.contains("profile")) {
             return USER_PROFILE;
-        } else if (filePathName.contains("dsleep")) {
-            return DAY_SLEEP;
-        } else if (filePathName.contains("nsleep")) {
-            return NIGHT_SLEEP;
-        } else if (filePathName.contains("average")) {
-            return AVERAGE_DATA;
         }
-
         return UNKNOWN_FILE;
     }
 
