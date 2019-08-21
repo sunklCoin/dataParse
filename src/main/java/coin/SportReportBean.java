@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static java.math.MathContext.DECIMAL32;
 
@@ -167,6 +168,9 @@ public class SportReportBean {
         if (endTime == Long.MIN_VALUE)
             return "null";
         Date temp = new Date(endTime * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String tempStr = df.format(temp);
         return Long.toString(endTime) + "\n" + tempStr;
     }
@@ -206,6 +210,9 @@ public class SportReportBean {
         if (startTime == Long.MIN_VALUE)
             return "null";
         Date temp = new Date(startTime * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String tempStr = df.format(temp);
         return Long.toString(startTime) + "\n" + tempStr;
     }

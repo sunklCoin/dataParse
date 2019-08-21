@@ -290,7 +290,6 @@ public class Controller implements Initializable {
     private void setFileInfoByBean(FileInfoBean mFileInfoBean) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(mFileInfoBean.getTimeStamp() * 1000);
-        mFileInfoBean.getTimeZone();
         TimeZone timeZone = TimeZone.getDefault();
         timeZone.setRawOffset(mFileInfoBean.getTimeZone() * 15 * 60 * 1000);
         df.setTimeZone(timeZone);

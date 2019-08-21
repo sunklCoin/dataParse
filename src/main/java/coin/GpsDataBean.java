@@ -3,6 +3,7 @@ package coin;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class GpsDataBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -16,16 +17,19 @@ public class GpsDataBean {
         this.timeStamp = Long.MIN_VALUE;
     }
 
-    public float getLat() {
-        return lat;
+    public String getLat() {
+        String ret = String.format("%.7f",lat);
+
+        return ret;
     }
 
     public void setLat(float lat) {
         this.lat = lat;
     }
 
-    public float getLon() {
-        return lon;
+    public String getLon() {
+        String ret = String.format("%.7f",lon);
+        return ret;
     }
 
     public void setLon(float lon) {
@@ -38,6 +42,9 @@ public class GpsDataBean {
             return "Invaild value";
         Date temp = new Date(timeStamp * 1000);
         String tempStr = df.format(temp);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         return Long.toString(timeStamp) + "\n" + tempStr;
     }
 

@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class SportRecordType1Bean {
     public static final DecimalFormat df2 = new DecimalFormat( "0.00" );
@@ -71,6 +72,9 @@ public class SportRecordType1Bean {
     public void setDtString(long timeStamp) {
         Date date = new Date(resumeTimeStamp);
         //String dtStr = df.format(date);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         this.dtString = df.format(date);
     }
 
@@ -112,6 +116,9 @@ public class SportRecordType1Bean {
         if (resumeTimeStamp == Long.MIN_VALUE)
             return "null";
         Date date = new Date(resumeTimeStamp * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String dtStr = df.format(date);
         return Long.toString(resumeTimeStamp) + "\n" + dtStr;
     }

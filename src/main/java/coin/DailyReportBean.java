@@ -3,6 +3,7 @@ package coin;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DailyReportBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -62,6 +63,9 @@ public class DailyReportBean {
         if (timeOfmaxHeartRate == Long.MIN_VALUE)
             return "null";
         Date temp = new Date(timeOfmaxHeartRate * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String tempStr = df.format(temp);
         return Long.toString(timeOfmaxHeartRate) + "\n" + tempStr;
     }
@@ -71,6 +75,9 @@ public class DailyReportBean {
         if (timeOfminHeartRate == Long.MIN_VALUE)
             return "null";
         Date temp = new Date(timeOfminHeartRate * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
         String tempStr = df.format(temp);
         return Long.toString(timeOfminHeartRate) + "\n" + tempStr;
     }

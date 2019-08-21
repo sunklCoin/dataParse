@@ -91,12 +91,12 @@ public class DataConverTool {
         for (String str : fileFormat) {
             System.out.println(str);
         }
-        FileInfoBean fileInfoBean = new FileInfoBean();
+        FileInfoBean fileInfoBean = FileInfoBean.getInstance();//new FileInfoBean();
         fileInfoBean.setFileName(destFile);
         int index = fileFormat.length - 1;
         fileInfoBean.setVersion(fileFormat[index--]);
         fileInfoBean.setFileType(fileFormat[index--]);
-        if (fileType == SPORT_FILE_TYPE) {
+        if (fileType == SPORT_FILE_TYPE || fileType == GPS_DATA_TYPE) {
             fileInfoBean.setSportType(Integer.parseInt(fileFormat[index--]));
         }
         fileInfoBean.setTimeStamp(Long.parseLong(fileFormat[index]));
@@ -190,6 +190,7 @@ public class DataConverTool {
     private SportReportBean parserOutdoorRunning(final byte[] fileContent) {
         SportReportBean sportReportBean = new SportReportBean();
         byte[] temp = Arrays.copyOfRange(fileContent, 0, 4);
+
         sportReportBean.setStartTime(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 0, 4)));
 
@@ -758,9 +759,10 @@ public class DataConverTool {
                 }
                 for (int step = 0; step < recordeCnt; step++) {
                     readRet = raf.read(fileContent);
+                    System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
+                    startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE1_DYNAMIC_BUFF_SIZE) {
                         startPos += readRet;
-                        System.out.println("raf.read ret " + readRet);
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setInitAltitude(initAltitude);
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
@@ -815,9 +817,9 @@ public class DataConverTool {
                 }
                 for (int step = 0; step < recordeCnt; step++) {
                     readRet = raf.read(fileContent);
+                    System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
+                    startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE2_DYNAMIC_BUFF_SIZE) {
-                        startPos += readRet;
-                        System.out.println("raf.read ret " + readRet);
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
                         sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
@@ -867,9 +869,9 @@ public class DataConverTool {
                 }
                 for (int step = 0; step < recordeCnt; step++) {
                     readRet = raf.read(fileContent);
+                    System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
+                    startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE3_DYNAMIC_BUFF_SIZE) {
-                        startPos += readRet;
-                        System.out.println("raf.read ret " + readRet);
                         //SportRecordType1Detail bean = new SportRecordType1Detail();
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setInitAltitude(initAltitude);
@@ -920,9 +922,9 @@ public class DataConverTool {
                 }
                 for (int step = 0; step < recordeCnt; step++) {
                     readRet = raf.read(fileContent);
+                    System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
+                    startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE) {
-                        startPos += readRet;
-                        System.out.println("raf.read ret " + readRet);
                         //SportRecordType1Detail bean = new SportRecordType1Detail();
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setRecordCnt(recordeCnt);

@@ -8,6 +8,14 @@ public class FileInfoBean {
     private String version;
     private int timeZone;
 
+    private static FileInfoBean instance;
+    public static FileInfoBean getInstance() {
+        if (instance == null) {
+            instance = new FileInfoBean();
+        }
+        return instance;
+    }
+
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
