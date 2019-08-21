@@ -6,29 +6,29 @@ import java.util.Date;
 
 public class GpsDataBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private Double lat;
-    private Double lon;
+    private float lat;
+    private float lon;
     private long timeStamp;
 
     public GpsDataBean() {
-        this.lat = Double.MIN_VALUE;
-        this.lon = Double.MIN_VALUE;
+        this.lat = Float.MIN_VALUE;
+        this.lon = Float.MIN_VALUE;
         this.timeStamp = Long.MIN_VALUE;
     }
 
-    public Double getLat() {
+    public float getLat() {
         return lat;
     }
 
-    public void setLat(Double lat) {
+    public void setLat(float lat) {
         this.lat = lat;
     }
 
-    public Double getLon() {
+    public float getLon() {
         return lon;
     }
 
-    public void setLon(Double lon) {
+    public void setLon(float lon) {
         this.lon = lon;
     }
 

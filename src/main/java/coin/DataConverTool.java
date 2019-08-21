@@ -958,7 +958,8 @@ public class DataConverTool {
                 GpsDataBean gpsDataBean = new GpsDataBean();
                 long timeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4));
                 gpsDataBean.setTimeStamp(timeStamp);
-                long lon = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 4, 8));
+
+                /*long lon = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 4, 8));
                 int temp = (int) lon & 0x7ff00000 >> 30;
                 int first = ((lon & 0x80000000 >> 31) == 0 ? temp : -temp);
                 int sec = (int) (lon & 0x000fffff);
@@ -969,8 +970,9 @@ public class DataConverTool {
                 first = ((lat & 0x80000000 >> 31) == 0 ? temp : -temp);
                 sec = (int) (lat & 0x000fffff);
                 val = (first + (double) sec / 1000000);
-                gpsDataBean.setLat(val);
-
+                gpsDataBean.setLat(val);*/
+                gpsDataBean.setLon(ByteUtil.getFloat(Arrays.copyOfRange(fileContent, 4, 8)));
+                gpsDataBean.setLat(ByteUtil.getFloat(Arrays.copyOfRange(fileContent, 8, 12)));
                 arrayList.add(gpsDataBean);
             }
         } catch (IOException e) {

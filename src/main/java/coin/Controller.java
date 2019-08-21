@@ -120,6 +120,7 @@ public class Controller implements Initializable {
         if (file != null) {
             String path = file.getPath();//选择的文件夹路径
             System.out.println("select path " + path);
+            dataList.clear();
             setTitle(path);
             recursiveFiles(path);
         }
