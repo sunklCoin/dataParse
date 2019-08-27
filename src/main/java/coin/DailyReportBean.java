@@ -19,7 +19,7 @@ public class DailyReportBean {
     private short   avgPressure;        // 1 bytes
     private short   maxPressure;        // 1 bytes
     private short   minPressure;        // 1 bytes
-    private int     standFlag;          // 3 bytes
+    private String     standFlag;          // 3 bytes
 
     public DailyReportBean() {
         this.totalStepCount      = Long.MIN_VALUE ;
@@ -34,7 +34,7 @@ public class DailyReportBean {
         this.avgPressure         = Short.MIN_VALUE ;
         this.maxPressure         = Short.MIN_VALUE ;
         this.minPressure         = Short.MIN_VALUE ;
-        this.standFlag           = Integer.MIN_VALUE ;
+        this.standFlag           = "none" ;
     }
 
     public String getTotalStepCount() {
@@ -46,9 +46,7 @@ public class DailyReportBean {
 
     public String getStandFlag() {
         /*return standFlag;*/
-        if (standFlag == Integer.MIN_VALUE)
-            return "null";
-        return Integer.toString(standFlag);
+        return standFlag;
     }
 
     public String getTotalCalorie() {
@@ -174,7 +172,7 @@ public class DailyReportBean {
         this.restingHeartRate = restingHeartRate;
     }
 
-    public void setStandFlag(int standFlag) {
+    public void setStandFlag(String standFlag) {
         this.standFlag = standFlag;
     }
 

@@ -724,12 +724,14 @@ public class Controller implements Initializable {
 
     private void loadDaySleepData(ArrayList<DailySleepBean> mDaySleepList) {
         list.clear();
-        list.add(mDaySleepList);
+        list.addAll(mDaySleepList);
         tableView.getColumns().clear();
         TableColumn sleepDuration = new TableColumn("白天睡眠累计时长(分钟)");
         sleepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepDuration"));
+
         TableColumn changeOfTimeStamp = new TableColumn("睡眠模式变动的时间戳");
         changeOfTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("changeOfTimeStamp"));
+
         TableColumn sleepMode = new TableColumn("变动过后的睡眠模式");
         sleepMode.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
 
@@ -738,7 +740,7 @@ public class Controller implements Initializable {
 
     private void loadNightSleepData(ArrayList<NightSleepBean> mNightSleepList) {
         list.clear();
-        list.add(mNightSleepList);
+        list.addAll(mNightSleepList);
         tableView.getColumns().clear();
         TableColumn totalSleepScore = new TableColumn("夜间睡眠总分");
         totalSleepScore.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalSleepScore"));

@@ -542,20 +542,20 @@ public class DataConverTool {
         singleBytebuff = Arrays.copyOfRange(fileContent, 13, 14);         // 1 byte
         mDailyReportBean.setMinHeartRate(ByteUtil.getUnsignedChar(singleBytebuff));
 
-        fourBytebuff = Arrays.copyOfRange(fileContent, 13, 17);         // 4 byte
+        fourBytebuff = Arrays.copyOfRange(fileContent, 14, 18);         // 4 byte
         mDailyReportBean.setTimeOfminHeartRate(ByteUtil.getUnsignedInt(fourBytebuff));
-        singleBytebuff = Arrays.copyOfRange(fileContent, 17, 18);         // 1 byte
+        singleBytebuff = Arrays.copyOfRange(fileContent, 18, 19);         // 1 byte
         mDailyReportBean.setAvgHeartRate(ByteUtil.getUnsignedChar(singleBytebuff));
 
-        singleBytebuff = Arrays.copyOfRange(fileContent, 18, 19);         // 1 byte
-        mDailyReportBean.setAvgPressure(ByteUtil.getUnsignedChar(singleBytebuff));
         singleBytebuff = Arrays.copyOfRange(fileContent, 19, 20);         // 1 byte
-        mDailyReportBean.setMaxPressure(ByteUtil.getUnsignedChar(singleBytebuff));
+        mDailyReportBean.setAvgPressure(ByteUtil.getUnsignedChar(singleBytebuff));
         singleBytebuff = Arrays.copyOfRange(fileContent, 20, 21);         // 1 byte
+        mDailyReportBean.setMaxPressure(ByteUtil.getUnsignedChar(singleBytebuff));
+        singleBytebuff = Arrays.copyOfRange(fileContent, 21, 22);         // 1 byte
         mDailyReportBean.setMinPressure(ByteUtil.getUnsignedChar(singleBytebuff));
 
-        fourBytebuff = Arrays.copyOfRange(fileContent, 21, 25); // 4 bytes
-        mDailyReportBean.setStandFlag(ByteUtil.getUnsignedShort(fourBytebuff));
+        byte[] threeBytebuff = Arrays.copyOfRange(fileContent, 22, 25); // 3 bytes
+        mDailyReportBean.setStandFlag(ByteUtil.toHexString(threeBytebuff));
 
         return mDailyReportBean;
     }
@@ -1143,6 +1143,7 @@ public class DataConverTool {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("raf.read ret " + readRet);
         return arrayList;
     }
 
