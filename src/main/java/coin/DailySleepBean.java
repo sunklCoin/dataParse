@@ -11,8 +11,20 @@ public class DailySleepBean {
     private long changeOfTimeStamp;
     private byte sleepMode;
 
-    public byte getSleepMode() {
-        return sleepMode;
+    public DailySleepBean() {
+        this.sleepDuration = Integer.MIN_VALUE;
+        this.changeOfTimeStamp = Long.MIN_VALUE;
+        this.sleepMode = Byte.MIN_VALUE;
+    }
+
+    public String getSleepMode() {
+        String errorStr = "";
+        if (sleepMode == Byte.MIN_VALUE)
+            return "";
+        if (sleepMode < 0 || sleepMode > 5) {
+            errorStr = "(error data)";
+        }
+        return Byte.toString(sleepMode) + errorStr;
     }
 
     public void setSleepMode(byte sleepMode) {
@@ -21,7 +33,7 @@ public class DailySleepBean {
 
     public String getChangeOfTimeStamp() {
         if (changeOfTimeStamp == Long.MIN_VALUE)
-            return "null";
+            return "";
         Date date = new Date(changeOfTimeStamp * 1000);
         TimeZone timeZone = TimeZone.getDefault();
         timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
@@ -34,8 +46,11 @@ public class DailySleepBean {
         this.changeOfTimeStamp = changeOfTimeStamp;
     }
 
-    public int getSleepDuration() {
-        return sleepDuration;
+    public String getSleepDuration() {
+        if (sleepDuration == Integer.MIN_VALUE) {
+            return "";
+        }
+        return Integer.toString(sleepDuration);
     }
 
     public void setSleepDuration(int sleepDuration) {

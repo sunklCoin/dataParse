@@ -761,7 +761,7 @@ public class Controller implements Initializable {
         sleepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepDuration"));
 
         TableColumn aSleepTimeStamp = new TableColumn("夜间睡眠入睡时间");
-        aSleepTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("aSleepTimeStamp"));
+        aSleepTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepTimeStamp"));
 
         TableColumn wakeupTimeStamp = new TableColumn("夜间睡眠醒来时间");
         wakeupTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("wakeupTimeStamp"));
@@ -793,9 +793,9 @@ public class Controller implements Initializable {
         TableColumn sleepMode = new TableColumn("变动过后的睡眠模式");
         sleepMode.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
 
-        tableView.getColumns().addAll(totalSleepScore, totalSleepQualityScore, totalSleepDurationScore, sleepSummary,
+        tableView.getColumns().addAll( changeOfTimeStamp, sleepMode, totalSleepScore, totalSleepQualityScore, totalSleepDurationScore, sleepSummary,
                 sleepAdvise, sleepDuration, aSleepTimeStamp, wakeupTimeStamp, sleepResumeScore, sleepUneasyScore,
-                wakeupCount, deepDuration, lightDuration, eyeMoveDuration, soberDuration, changeOfTimeStamp, sleepMode);
+                wakeupCount, deepDuration, lightDuration, eyeMoveDuration, soberDuration);
     }
 
 

@@ -774,9 +774,9 @@ public class DataConverTool {
                         sportRecordType1Bean.setIntergerKM((short) ((fileContent[2] & 0x0080) >> 7));
                         sportRecordType1Bean.setHeightType((short) ((fileContent[2] & 0x0040) >> 6));
                         int h = fileContent[2] & 0x003f;
-                        sportRecordType1Bean.setHeight((float) (h / 10));
+                        sportRecordType1Bean.setHeight(h / 10.0f);
                         int km = fileContent[3] & 0x00ff;
-                        sportRecordType1Bean.setIncreaseKm((float) (km / 10));
+                        sportRecordType1Bean.setIncreaseKm(km / 10.0f);
                         arrayList.add(sportRecordType1Bean);
                     } else {
                         break;
@@ -828,7 +828,7 @@ public class DataConverTool {
                         sportRecordType1Bean.setIncreaseStep((short) (fileContent[0] & 0x000f));
                         sportRecordType1Bean.setHeartRate((short) (fileContent[1] & 0x00ff));
                         int km = fileContent[2] & 0x00ff;
-                        sportRecordType1Bean.setIncreaseKm((float) (km / 10));
+                        sportRecordType1Bean.setIncreaseKm(km / 10.0f);
                         arrayList.add(sportRecordType1Bean);
                     }
                 }
@@ -883,7 +883,7 @@ public class DataConverTool {
                         sportRecordType1Bean.setIntergerKM((short) ((fileContent[2] & 0x0080) >> 7));
                         sportRecordType1Bean.setHeightType((short) ((fileContent[2] & 0x0040) >> 6));
                         int h = fileContent[2] & 0x3f;
-                        sportRecordType1Bean.setHeight((float) (h / 10));
+                        sportRecordType1Bean.setHeight((float) (h / 10.0f));
                         arrayList.add(sportRecordType1Bean);
                     }
                 }
@@ -1129,11 +1129,18 @@ public class DataConverTool {
                 return null;
             }
             int sleepDur = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 0, 2));
+            DailySleepBean dailyHead = new DailySleepBean();
+            dailyHead.setSleepDuration(sleepDur);
+            if (raf.read(fileContent) >= 5) {
+                dailyHead.setChangeOfTimeStamp(
+                        ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                dailyHead.setSleepMode(fileContent[4]);
+            }
+            arrayList.add(dailyHead);
 
             while ((readRet = raf.read(fileContent)) >= 5) {
                 System.out.println("raf.read ret " + readRet);
                 DailySleepBean dailySleepBean = new DailySleepBean();
-                dailySleepBean.setSleepDuration(sleepDur);
                 dailySleepBean.setChangeOfTimeStamp(
                         ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
                 dailySleepBean.setSleepMode(fileContent[4]);
@@ -1184,25 +1191,33 @@ public class DataConverTool {
             int lightDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 20, 22));
             int eyeMoveDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 22, 24));
             int soberDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 24, 26));
+            NightSleepBean nightSleepHead = new NightSleepBean();
+            nightSleepHead.setTotalSleepScore(totalSleepScore);
+            nightSleepHead.setTotalSleepQualityScore(totalSleepQualityScore);
+            nightSleepHead.setTotalSleepDurationScore(totalSleepDurationScore);
+            nightSleepHead.setSleepSummary(sleepSummary);
+            nightSleepHead.setSleepAdvise(sleepAdvise);
+            nightSleepHead.setSleepDuration(sleepDuration);
+            nightSleepHead.setSleepTimeStamp(aSleepTimeStamp);
+            nightSleepHead.setWakeupTimeStamp(wakeupTimeStamp);
+            nightSleepHead.setSleepResumeScore(sleepResumeScore);
+            nightSleepHead.setSleepUneasyScore(sleepUneasyScore);
+            nightSleepHead.setWakeupCount(wakeupCount);
+            nightSleepHead.setDeepDuration(deepDuration);
+            nightSleepHead.setLightDuration(lightDuration);
+            nightSleepHead.setEyeMoveDuration(eyeMoveDuration);
+            nightSleepHead.setSoberDuration(soberDuration);
+            if (raf.read(fileContent) >= 5) {
+                nightSleepHead.setChangeOfTimeStamp(
+                        ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                nightSleepHead.setSleepMode(fileContent[4]);
+            }
+            arrayList.add(nightSleepHead);
 
             while ((readRet = raf.read(fileContent)) >= 5) {
                 System.out.println("raf.read ret " + readRet);
                 NightSleepBean nightSleepBean = new NightSleepBean();
-                nightSleepBean.setTotalSleepScore(totalSleepScore);
-                nightSleepBean.setTotalSleepQualityScore(totalSleepQualityScore);
-                nightSleepBean.setTotalSleepDurationScore(totalSleepDurationScore);
-                nightSleepBean.setSleepSummary(sleepSummary);
-                nightSleepBean.setSleepAdvise(sleepAdvise);
-                nightSleepBean.setSleepDuration(sleepDuration);
-                nightSleepBean.setaSleepTimeStamp(aSleepTimeStamp);
-                nightSleepBean.setWakeupTimeStamp(wakeupTimeStamp);
-                nightSleepBean.setSleepResumeScore(sleepResumeScore);
-                nightSleepBean.setSleepUneasyScore(sleepUneasyScore);
-                nightSleepBean.setWakeupCount(wakeupCount);
-                nightSleepBean.setDeepDuration(deepDuration);
-                nightSleepBean.setLightDuration(lightDuration);
-                nightSleepBean.setEyeMoveDuration(eyeMoveDuration);
-                nightSleepBean.setSoberDuration(soberDuration);
+                System.out.println(ByteUtil.toHexString(fileContent));
                 nightSleepBean.setChangeOfTimeStamp(
                         ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
                 nightSleepBean.setSleepMode(fileContent[4]);

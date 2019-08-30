@@ -198,7 +198,7 @@ public class DailyRecordBean {
 
     public String getExceptionHeartRate() {
         if (exceptionHeartRate == Short.MIN_VALUE)
-            return "null";
+            return "-";
         return Short.toString(exceptionHeartRate);
     }
 
