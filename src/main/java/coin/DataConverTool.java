@@ -1231,8 +1231,9 @@ public class DataConverTool {
     }
 
 
-    public AverageDataBean parseAverageData(String file) {
+    public ArrayList<AverageDataBean> parseAverageData(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, AVERAGE_DATA_TYPE);
+        ArrayList<AverageDataBean> arrayList = new ArrayList<AverageDataBean>();
         byte[] fileContent = new byte[7];
         File reportFile = new File(file);
         int readRet = 0;
@@ -1240,24 +1241,23 @@ public class DataConverTool {
         if (fileSize <= 0) {
             return null;
         }
-        AverageDataBean averageDataBean = new AverageDataBean();
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
-            readRet = raf.read(fileContent);
-            System.out.println("raf.read ret " + readRet);
-            if (readRet < 7) {
-                return null;
+            while ((readRet = raf.read(fileContent)) >= 7) {
+                System.out.println("raf.read ret " + readRet);
+                AverageDataBean averageDataBean = new AverageDataBean();
+                averageDataBean.setTimeStamp(ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                averageDataBean.setTimeZone(fileContent[4]);
+                averageDataBean.setAveragePress(fileContent[5]);
+                averageDataBean.setResetingHR(fileContent[6]);
+                arrayList.add(averageDataBean);
             }
-            averageDataBean.setTimeStamp(ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
-            averageDataBean.setTimeZone(fileContent[4]);
-            averageDataBean.setAveragePress(fileContent[5]);
-            averageDataBean.setResetingHR(fileContent[6]);
             raf.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return averageDataBean;
+        return arrayList;
     }
 
 }

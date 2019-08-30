@@ -277,13 +277,12 @@ public class Controller implements Initializable {
             }
             break;
             case AVERAGE_DATA: {
-                AverageDataBean mNAverageData = dataConverTool.parseAverageData(fileName);
+                ArrayList<AverageDataBean> mNAverageData = dataConverTool.parseAverageData(fileName);
                 FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
                 setFileInfoByBean(mFileInfoBean);
                 loadAverageData(mNAverageData);
             }
             break;
-
         }
     }
 
@@ -799,9 +798,9 @@ public class Controller implements Initializable {
     }
 
 
-    private void loadAverageData(AverageDataBean mAverageData) {
+    private void loadAverageData(ArrayList<AverageDataBean> averageDataList) {
         list.clear();
-        list.add(mAverageData);
+        list.addAll(averageDataList);
         tableView.getColumns().clear();
         TableColumn timeStamp = new TableColumn("时间戳");
         timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
