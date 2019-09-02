@@ -312,9 +312,9 @@ public class Controller implements Initializable {
         activityTypeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("activityType"));
         TableColumn increaseCalorieColumn = new TableColumn("新增卡路里");
         increaseCalorieColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseCalorie"));
-        TableColumn actStrongColumn = new TableColumn("活动强度等级");
+        TableColumn actStrongColumn = new TableColumn("活动强度等级\n0[静止]1[微弱]2[低强度]\n3[中等强度]4[高强度]\n5[剧烈]7[未知]");
         actStrongColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("actStrong"));
-        TableColumn sportTypeColumn = new TableColumn("运动类型");
+        TableColumn sportTypeColumn = new TableColumn("运动类型\n0[无]1[户外跑步]2[户外健走]\n3[室内跑步]4[登山]5[越野]\n6[户外骑行]7[室内骑行]8[自由训练]\n9[泳池游泳]10[开放水域游泳]");
         sportTypeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("sportType"));
         TableColumn increaseDistanceColumn = new TableColumn("新增里程");
         increaseDistanceColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseDistance"));
@@ -322,11 +322,11 @@ public class Controller implements Initializable {
         heartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("heartRate"));
         TableColumn dumpEnergyColumn = new TableColumn("剩余能量（0~100）");
         dumpEnergyColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("dumpEnergy"));
-        TableColumn sleepModeColumn = new TableColumn("睡眠模式");
+        TableColumn sleepModeColumn = new TableColumn("睡眠模式\n0[未睡觉]2[深睡]\n3[浅睡]4[快速眼动]5[清醒]");
         sleepModeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
-        TableColumn energyStateColumn = new TableColumn("能量状态");
+        TableColumn energyStateColumn = new TableColumn("能量状态\n0[未知]1[运动(0~100)]\n" + "2[压力(-100~0)]3[恢复(0~100)]");
         energyStateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("energyState"));
-        TableColumn energyStateValueColumn = new TableColumn("能量状态值");
+        TableColumn energyStateValueColumn = new TableColumn("能量状态值[-100~+100]");
         energyStateValueColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("energyStateValue"));
         TableColumn exceptionHeartRateColumn = new TableColumn("异常前心率值");
         exceptionHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("exceptionHeartRate"));
@@ -370,23 +370,23 @@ public class Controller implements Initializable {
         list.clear();
         list.add(mDailyReportBean);
         tableView.getColumns().clear();
-        TableColumn totalStepCountColumn = new TableColumn("当前总步数");
+        TableColumn totalStepCountColumn = new TableColumn("当前总步数\n(步)");
         totalStepCountColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalStepCount"));
-        TableColumn totalCalorieColumn = new TableColumn("当前总卡路里");
+        TableColumn totalCalorieColumn = new TableColumn("当前总卡路里\n(千卡)");
         totalCalorieColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalCalorie"));
-        TableColumn currHeartRateCntColumn = new TableColumn("当前心率");
+        TableColumn currHeartRateCntColumn = new TableColumn("当前心率\n(次/分钟)");
         currHeartRateCntColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("currHeartRate"));
-        TableColumn restingHeartRateColumn = new TableColumn("当日静息心率");
+        TableColumn restingHeartRateColumn = new TableColumn("当日静息心率\n(次/分钟)");
         restingHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("restingHeartRate"));
-        TableColumn maxHeartRateColumn = new TableColumn("当日最大心率");
+        TableColumn maxHeartRateColumn = new TableColumn("当日最大心率\n(次/分钟)");
         maxHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxHeartRate"));
         TableColumn timeOfmaxHeartRateColumn = new TableColumn("当日最大心率出现时间");
         timeOfmaxHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfmaxHeartRate"));
-        TableColumn minHeartRateColumn = new TableColumn("当日最小心率");
+        TableColumn minHeartRateColumn = new TableColumn("当日最小心率\n(次/分钟)");
         minHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("minHeartRate"));
         TableColumn timeOfminHeartRateColumn = new TableColumn("当日最小心率出现时间");
         timeOfminHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfminHeartRate"));
-        TableColumn avgHeartRateColumn = new TableColumn("当日平均心率");
+        TableColumn avgHeartRateColumn = new TableColumn("当日平均心率\n(次/分钟)");
         avgHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("avgHeartRate"));
         TableColumn avgPressureColumn = new TableColumn("当日平均压力");
         avgPressureColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("avgPressure"));
@@ -413,72 +413,72 @@ public class Controller implements Initializable {
         TableColumn endTime = new TableColumn("运动结束时间");
         endTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("endTime"));
 
-        TableColumn totalTime = new TableColumn("运动总时长");
+        TableColumn totalTime = new TableColumn("运动总时长\n(秒)");
         totalTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalTime"));
-        TableColumn totalDistance = new TableColumn("总里程");
+        TableColumn totalDistance = new TableColumn("总里程\n(米)");
         totalDistance.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalDistance"));
 
-        TableColumn calorie = new TableColumn("卡路里");
+        TableColumn calorie = new TableColumn("卡路里\n(千卡)");
         calorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("calorie"));
 
-        TableColumn maxPace = new TableColumn("最快配速");
+        TableColumn maxPace = new TableColumn("最快配速\n(秒/公里 | 秒/百米)");
         maxPace.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxPace"));
-        TableColumn minPace = new TableColumn("最慢配速");
+        TableColumn minPace = new TableColumn("最慢配速\n(秒/公里 | 秒/百米)");
         minPace.setCellValueFactory(new PropertyValueFactory<Object, Object>("minPace"));
-        TableColumn maxSpeed = new TableColumn("最快速度");
+        TableColumn maxSpeed = new TableColumn("最快速度\n(公里/小时)");
         maxSpeed.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxSpeed"));
 
-        TableColumn totalStepCount = new TableColumn("总步数");
+        TableColumn totalStepCount = new TableColumn("总步数\n(步)");
         totalStepCount.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalStepCount"));
-        TableColumn maxStrideFreq = new TableColumn("最大步频");
+        TableColumn maxStrideFreq = new TableColumn("最大步频\n(步/分钟)");
         maxStrideFreq.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxStrideFreq"));
 
-        TableColumn aveHeart = new TableColumn("平均心率");
+        TableColumn aveHeart = new TableColumn("平均心率\n(次/分钟)");
         aveHeart.setCellValueFactory(new PropertyValueFactory<Object, Object>("aveHeart"));
-        TableColumn maxHeart = new TableColumn("最大心率");
+        TableColumn maxHeart = new TableColumn("最大心率\n(次/分钟)");
         maxHeart.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxHeart"));
-        TableColumn minHeart = new TableColumn("最小心率");
+        TableColumn minHeart = new TableColumn("最小心率\n(次/分钟)");
         minHeart.setCellValueFactory(new PropertyValueFactory<Object, Object>("minHeart"));
 
-        TableColumn asendTotal = new TableColumn("累计上升");
+        TableColumn asendTotal = new TableColumn("累计上升\n(米)");
         asendTotal.setCellValueFactory(new PropertyValueFactory<Object, Object>("asendTotal"));
 
-        TableColumn descendTotal = new TableColumn("累计下降");
+        TableColumn descendTotal = new TableColumn("累计下降\n(米)");
         descendTotal.setCellValueFactory(new PropertyValueFactory<Object, Object>("descendTotal"));
-        TableColumn avgHeight = new TableColumn("平均高度");
+        TableColumn avgHeight = new TableColumn("平均高度\n(米)");
         avgHeight.setCellValueFactory(new PropertyValueFactory<Object, Object>("avgHeight"));
-        TableColumn maxHeight = new TableColumn("最大高度");
+        TableColumn maxHeight = new TableColumn("最大高度\n(米)");
         maxHeight.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxHeight"));
-        TableColumn minHeight = new TableColumn("最小高度");
+        TableColumn minHeight = new TableColumn("最小高度\n(米)");
         minHeight.setCellValueFactory(new PropertyValueFactory<Object, Object>("minHeight"));
 
         TableColumn tranEffct = new TableColumn("训练效果");
         tranEffct.setCellValueFactory(new PropertyValueFactory<Object, Object>("tranEffct"));
-        TableColumn vo2Max = new TableColumn("最大摄氧量");
+        TableColumn vo2Max = new TableColumn("最大摄氧量\n(毫升/千克/分钟)");
         vo2Max.setCellValueFactory(new PropertyValueFactory<Object, Object>("vo2Max"));
         TableColumn eneryConsum = new TableColumn("身体能量消耗（0~100）");
         eneryConsum.setCellValueFactory(new PropertyValueFactory<Object, Object>("eneryConsum"));
-        TableColumn preRecoverTime = new TableColumn("预计恢复时间");
+        TableColumn preRecoverTime = new TableColumn("预计恢复时间\n(小时)");
         preRecoverTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("preRecoverTime"));
 
-        TableColumn heartRateLimitDuration = new TableColumn("心率-极限时长");
+        TableColumn heartRateLimitDuration = new TableColumn("心率-极限时长\n(秒)");
         heartRateLimitDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("heartRateLimitDuration"));
-        TableColumn anaerobicEnduranceDuration = new TableColumn("心率-无氧耐力时长");
+        TableColumn anaerobicEnduranceDuration = new TableColumn("心率-无氧耐力时长\n(秒)");
         anaerobicEnduranceDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("anaerobicEnduranceDuration"));
-        TableColumn aerobicEnduranceDuration = new TableColumn("心率-有氧耐力时长");
+        TableColumn aerobicEnduranceDuration = new TableColumn("心率-有氧耐力时长\n(秒)");
         aerobicEnduranceDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("aerobicEnduranceDuration"));
-        TableColumn fatBurningTime = new TableColumn("心率-燃脂时长");
+        TableColumn fatBurningTime = new TableColumn("心率-燃脂时长\n(秒)");
         fatBurningTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("fatBurningTime"));
 
 
-        TableColumn warmupTime = new TableColumn("心率-热身时长");
+        TableColumn warmupTime = new TableColumn("心率-热身时长\n(秒)");
         warmupTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("warmupTime"));
-        TableColumn totalStrokes = new TableColumn("总划水次数");
+        TableColumn totalStrokes = new TableColumn("总划水次数\n(次)");
         totalStrokes.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalStrokes"));
         TableColumn mainSwimType = new TableColumn("主泳姿");
         mainSwimType.setCellValueFactory(new PropertyValueFactory<Object, Object>("mainSwimType"));
 
-        TableColumn maxStrokeFreq = new TableColumn("最大划频");
+        TableColumn maxStrokeFreq = new TableColumn("最大划频\n(次/分钟)");
         maxStrokeFreq.setCellValueFactory(new PropertyValueFactory<Object, Object>("maxStrokeFreq"));
 
         TableColumn turnAround = new TableColumn("转身次数");
@@ -488,7 +488,7 @@ public class Controller implements Initializable {
         TableColumn bestSwolf = new TableColumn("最佳swolf");
         bestSwolf.setCellValueFactory(new PropertyValueFactory<Object, Object>("bestSwolf"));
 
-        TableColumn poolWidth = new TableColumn("泳池宽度");
+        TableColumn poolWidth = new TableColumn("泳池宽度\n(米)");
         poolWidth.setCellValueFactory(new PropertyValueFactory<Object, Object>("poolWidth"));
         switch (sportType) {
             case DataConverTool.OUTDOOR_RUNNING:
@@ -697,23 +697,23 @@ public class Controller implements Initializable {
         list.clear();
         list.add(mDailyDistributeBean);
         tableView.getColumns().clear();
-        TableColumn seriousPressDur = new TableColumn("压力-重度时长");
+        TableColumn seriousPressDur = new TableColumn("压力-重度时长\n(分钟)");
         seriousPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("seriousPressDur"));
-        TableColumn moderatePressDur = new TableColumn("压力-中度时长");
+        TableColumn moderatePressDur = new TableColumn("压力-中度时长\n(分钟)");
         moderatePressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("moderatePressDur"));
-        TableColumn mildPressDur = new TableColumn("压力-轻度时长");
+        TableColumn mildPressDur = new TableColumn("压力-轻度时长\n(分钟)");
         mildPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("mildPressDur"));
-        TableColumn relaxPressDur = new TableColumn("压力-放松时长");
+        TableColumn relaxPressDur = new TableColumn("压力-放松时长\n(分钟)");
         relaxPressDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("relaxPressDur"));
-        TableColumn limitHeartDur = new TableColumn("心率-极限时长");
+        TableColumn limitHeartDur = new TableColumn("心率-极限时长\n(分钟)");
         limitHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("limitHeartDur"));
-        TableColumn anaerobicHeartDur = new TableColumn("心率-无氧耐力时长");
+        TableColumn anaerobicHeartDur = new TableColumn("心率-无氧耐力时长\n(分钟)");
         anaerobicHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("anaerobicHeartDur"));
-        TableColumn aerobcHeartDur = new TableColumn("心率-有氧耐力时长");
+        TableColumn aerobcHeartDur = new TableColumn("心率-有氧耐力时长\n(分钟)");
         aerobcHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("aerobcHeartDur"));
-        TableColumn fatBurningHeartDur = new TableColumn("心率-燃脂时长");
+        TableColumn fatBurningHeartDur = new TableColumn("心率-燃脂时长\n(分钟)");
         fatBurningHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("fatBurningHeartDur"));
-        TableColumn warmUpHeartDur = new TableColumn("心率-热身时长");
+        TableColumn warmUpHeartDur = new TableColumn("心率-热身时长\n(分钟)");
         warmUpHeartDur.setCellValueFactory(new PropertyValueFactory<Object, Object>("warmUpHeartDur"));
 
         tableView.getColumns().addAll(seriousPressDur, moderatePressDur, mildPressDur, relaxPressDur, limitHeartDur,
@@ -777,13 +777,13 @@ public class Controller implements Initializable {
         TableColumn deepDuration = new TableColumn("夜间睡眠-深睡时长(分钟)");
         deepDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("deepDuration"));
 
-        TableColumn lightDuration = new TableColumn("夜间睡眠-浅睡时长(次)");
+        TableColumn lightDuration = new TableColumn("夜间睡眠-浅睡时长(分钟)");
         lightDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("lightDuration"));
 
-        TableColumn eyeMoveDuration = new TableColumn("夜间睡眠-眼动时长(次)");
+        TableColumn eyeMoveDuration = new TableColumn("夜间睡眠-眼动时长(分钟)");
         eyeMoveDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("eyeMoveDuration"));
 
-        TableColumn soberDuration = new TableColumn("夜间睡眠-清醒时长(次)");
+        TableColumn soberDuration = new TableColumn("夜间睡眠-清醒时长(分钟)");
         soberDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("soberDuration"));
 
         TableColumn changeOfTimeStamp = new TableColumn("睡眠模式变动的时间戳");

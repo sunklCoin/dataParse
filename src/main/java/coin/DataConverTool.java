@@ -1180,8 +1180,8 @@ public class DataConverTool {
             short sleepAdvise = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 4, 5));
 
             int sleepDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 5, 7));
-            long aSleepTimeStamp = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 7, 11));
-            long wakeupTimeStamp = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 11, 15));
+            long aSleepTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 7, 11));
+            long wakeupTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 11, 15));
 
             short sleepResumeScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 15, 16));
             short sleepUneasyScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 16, 17));
