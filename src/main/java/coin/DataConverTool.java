@@ -157,6 +157,7 @@ public class DataConverTool {
         }
         File reportFile = new File(file);
         byte[] fileContent = new byte[byteSize];
+        fileInfoBean.setFileSize(reportFile.length());
         try {
             FileInputStream in = new FileInputStream(reportFile);
             in.read(fileContent);
@@ -166,6 +167,7 @@ public class DataConverTool {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        fileInfoBean.setRecordCount(1);
         switch (fileInfoBean.getSportType()) {
             case OUTDOOR_RUNNING:
             case OUTDOOR_WALKING:
@@ -511,6 +513,7 @@ public class DataConverTool {
             return null;
         }
         File reportFile = new File(file);
+        fileInfoBean.setFileSize(reportFile.length());
         byte[] fileContent = new byte[byteSize];
         try {
             FileInputStream in = new FileInputStream(reportFile);
@@ -522,6 +525,7 @@ public class DataConverTool {
             e.printStackTrace();
         }
         DailyReportBean mDailyReportBean = parserDailyReportData(fileContent);
+        fileInfoBean.setRecordCount(mDailyReportBean != null ? 1 : 0);
         return mDailyReportBean;
     }
 
@@ -568,6 +572,7 @@ public class DataConverTool {
             return null;
         }
         File reportFile = new File(file);
+        fileInfoBean.setFileSize(reportFile.length());
         byte[] fileContent = new byte[byteSize];
         try {
             FileInputStream in = new FileInputStream(reportFile);
@@ -579,6 +584,7 @@ public class DataConverTool {
             e.printStackTrace();
         }
         UserInfoBean mUserInfoBean = parseUserProfileData(fileContent);
+        fileInfoBean.setRecordCount(mUserInfoBean != null ? 1 : 0);
         return mUserInfoBean;
     }
 
@@ -619,19 +625,22 @@ public class DataConverTool {
 
         byte[] fileContent = new byte[buffSize];
         File reportFile = new File(file);
+        fileInfoBean.setFileSize(reportFile.length());
         final long fileSize = reportFile.length();
         int startPos = 0;
+        int dataCount = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
-            do {
-                System.out.println("buffSize " + buffSize + " fileSize " + fileSize);
+            int ret = 0;
+            System.out.println("buffSize " + buffSize + " fileSize " + fileSize);
+            while ((ret = raf.read(fileContent)) >= DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE) {
                 System.out.println("startPos " + startPos);
-
-                int ret = raf.read(fileContent, 0, DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE);
+                // int ret = raf.read(fileContent, 0, DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE);
                 System.out.println("raf.read ret " + ret);
                 DailyRecordBean parseDailyRecordBean = parseFixLenBuffOfDailyRecord(fileContent);
                 startPos += DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE;
+                dataCount += 1;
                 if (parseDailyRecordBean == null) {
                     System.out.println("parseDailyRecordBean is null");
                     raf.close();
@@ -645,8 +654,10 @@ public class DataConverTool {
                     parseDailyRecordBean.setExceptionHeartRate(recordData8);
                 }
                 arrayList.add(parseDailyRecordBean);
-            } while ((fileSize - startPos) > DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE);
+            }
             raf.close();
+            fileInfoBean.setRecordCount(dataCount);
+            System.out.println("parseDailyRecordBean dataCount = " + dataCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -697,7 +708,8 @@ public class DataConverTool {
                 ((recordData7 & 0x0000e000) >> DAILY_RECORD_SLEEP_MODE_SHIFT_BIT));
         mDailyRecordBean.setEnergyState((byte)
                 ((recordData7 & 0x00001800) >> DAILY_RECORD_ENERGY_STATE_SHIFT_BIT));
-        mDailyRecordBean.setEnergyStateValue((short) (recordData7 & 0x000007ff));
+        int sign = (recordData7 & 0x00000400) == 0 ? -1 : 1;
+        mDailyRecordBean.setEnergyStateValue((short) (sign * (recordData7 & 0x000003ff)));
         return mDailyRecordBean;
     }
 
@@ -738,14 +750,16 @@ public class DataConverTool {
         File reportFile = new File(file);
         int readRet = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
+        long recCount = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
+            byte[] headBuff = new byte[12];
+            readRet = raf.read(headBuff);
             do {
-                byte[] headBuff = new byte[12];
-                readRet = raf.read(headBuff);
                 final float initAltitude = ByteUtil.getFloat(Arrays.copyOfRange(headBuff, 0, 4));
                 long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
                 long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 8, 12));
@@ -762,6 +776,7 @@ public class DataConverTool {
                     System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
                     startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE1_DYNAMIC_BUFF_SIZE) {
+                        recCount += 1;
                         startPos += readRet;
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setInitAltitude(initAltitude);
@@ -782,7 +797,8 @@ public class DataConverTool {
                         break;
                     }
                 }
-            } while ((fileSize - startPos) > SPORT_RECORD_TYPE1_DYNAMIC_BUFF_SIZE);
+            } while ((readRet = raf.read(headBuff)) >= 12);
+            getFileInfo().setRecordCount(recCount);
             raf.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -798,14 +814,17 @@ public class DataConverTool {
         File reportFile = new File(file);
         int readRet = 0;
         final long fileSize = reportFile.length();
+        System.out.println("parseSportRecordType2 fileSize " + fileSize);
+        getFileInfo().setFileSize(fileSize);
         DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
+        long recCount = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
+            byte[] headBuff = new byte[8];
+            readRet = raf.read(headBuff);
             do {
-                byte[] headBuff = new byte[8];
-                readRet = raf.read(headBuff);
                 long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 0, 4));
                 long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
                 startPos += readRet;
@@ -820,6 +839,7 @@ public class DataConverTool {
                     System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
                     startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE2_DYNAMIC_BUFF_SIZE) {
+                        recCount += 1;
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
                         sportRecordType1Bean.setResumeTimeStamp(resumeTimeStamp);
@@ -832,7 +852,8 @@ public class DataConverTool {
                         arrayList.add(sportRecordType1Bean);
                     }
                 }
-            } while ((fileSize - startPos) > SPORT_RECORD_TYPE2_DYNAMIC_BUFF_SIZE);
+            } while ((readRet = raf.read(headBuff)) >= 8);
+            getFileInfo().setRecordCount(recCount);
             raf.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -848,14 +869,16 @@ public class DataConverTool {
         File reportFile = new File(file);
         int readRet = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
+        long recCount = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
+            byte[] headBuff = new byte[12];
+            readRet = raf.read(headBuff);
             do {
-                byte[] headBuff = new byte[12];
-                readRet = raf.read(headBuff);
                 final float initAltitude = ByteUtil.getFloat(Arrays.copyOfRange(headBuff, 0, 4));
                 long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
                 long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 8, 12));
@@ -873,6 +896,7 @@ public class DataConverTool {
                     startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE3_DYNAMIC_BUFF_SIZE) {
                         //SportRecordType1Detail bean = new SportRecordType1Detail();
+                        recCount += 1;
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setInitAltitude(initAltitude);
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
@@ -887,8 +911,9 @@ public class DataConverTool {
                         arrayList.add(sportRecordType1Bean);
                     }
                 }
-            } while ((fileSize - startPos) > SPORT_RECORD_TYPE3_DYNAMIC_BUFF_SIZE);
+            } while ((readRet = raf.read(headBuff)) > 12);
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -902,7 +927,9 @@ public class DataConverTool {
         byte[] fileContent = new byte[buffSize];
         File reportFile = new File(file);
         int readRet = 0;
-        final long fileSize = reportFile.length();
+        long recCount = 0;
+            final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
         try {
@@ -925,6 +952,7 @@ public class DataConverTool {
                     System.out.println("raf.read start pos " + startPos + " " + ByteUtil.toHexString(fileContent));
                     startPos += readRet;
                     if (readRet >= SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE) {
+                        recCount += 1;
                         //SportRecordType1Detail bean = new SportRecordType1Detail();
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
                         sportRecordType1Bean.setRecordCnt(recordeCnt);
@@ -939,6 +967,7 @@ public class DataConverTool {
                 // arrayList.add(sportRecordType1Bean);
             } while ((fileSize - startPos) > SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE);
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -947,7 +976,10 @@ public class DataConverTool {
 
     public ArrayList<GpsDataBean> parseGpsDataFile(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, GPS_DATA_TYPE);
+        File reportFile = new File(file);
+        getFileInfo().setFileSize(reportFile.length());
         final int byteSize = GPS_DATA_FIX_SIZE;
+        long recCount = 0;
         ArrayList<GpsDataBean> arrayList = new ArrayList<GpsDataBean>();
         if (byteSize == 0) {
             return null;
@@ -960,7 +992,7 @@ public class DataConverTool {
                 GpsDataBean gpsDataBean = new GpsDataBean();
                 long timeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4));
                 gpsDataBean.setTimeStamp(timeStamp);
-
+                recCount += 1;
                 /*long lon = ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 4, 8));
                 int temp = (int) lon & 0x7ff00000 >> 30;
                 int first = ((lon & 0x80000000 >> 31) == 0 ? temp : -temp);
@@ -977,6 +1009,7 @@ public class DataConverTool {
                 gpsDataBean.setLat(ByteUtil.getFloat(Arrays.copyOfRange(fileContent, 8, 12)));
                 arrayList.add(gpsDataBean);
             }
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -991,6 +1024,7 @@ public class DataConverTool {
             return null;
         }
         File dataFile = new File(file);
+        fileInfoBean.setFileSize(dataFile.length());
         byte[] fileContent = new byte[byteSize];
         try {
             FileInputStream in = new FileInputStream(dataFile);
@@ -1002,6 +1036,7 @@ public class DataConverTool {
             e.printStackTrace();
         }
         DailyDistributeBean mDailyDistributeBean = parseDailyDistributeData(fileContent);
+        getFileInfo().setRecordCount(mDailyDistributeBean != null ? 1 : 0);
         return mDailyDistributeBean;
     }
 
@@ -1046,14 +1081,16 @@ public class DataConverTool {
         File reportFile = new File(file);
         int readRet = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
+        long recCount = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
+            byte[] headBuff = new byte[8];
+            readRet = raf.read(headBuff);
             do {
-                byte[] headBuff = new byte[8];
-                readRet = raf.read(headBuff);
                 long recordeCnt = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 0, 4));
                 long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
                 startPos += readRet;
@@ -1064,6 +1101,7 @@ public class DataConverTool {
                 for (int step = 0; step < recordeCnt; step++) {
                     readRet = raf.read(fileContent);
                     if (readRet >= SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE) {
+                        recCount += 1;
                         startPos += readRet;
                         System.out.println("raf.read ret " + readRet);
                         SportRecordType1Bean sportRecordType1Bean = new SportRecordType1Bean();
@@ -1102,8 +1140,9 @@ public class DataConverTool {
                         arrayList.add(sportRecordType1Bean);
                     }
                 }
-            } while ((fileSize - startPos) > SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE);
+            } while ((readRet = raf.read(headBuff)) >= 8);
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1116,7 +1155,9 @@ public class DataConverTool {
         byte[] fileContent = new byte[5];
         File reportFile = new File(file);
         int readRet = 0;
+        long recCount = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         if (fileSize <= 0) {
             return null;
         }
@@ -1136,9 +1177,11 @@ public class DataConverTool {
                         ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
                 dailyHead.setSleepMode(fileContent[4]);
             }
+            recCount += 1;
             arrayList.add(dailyHead);
 
             while ((readRet = raf.read(fileContent)) >= 5) {
+                recCount += 1;
                 System.out.println("raf.read ret " + readRet);
                 DailySleepBean dailySleepBean = new DailySleepBean();
                 dailySleepBean.setChangeOfTimeStamp(
@@ -1147,6 +1190,7 @@ public class DataConverTool {
                 arrayList.add(dailySleepBean);
             }
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1160,7 +1204,9 @@ public class DataConverTool {
         byte[] fileContent = new byte[5];
         File reportFile = new File(file);
         int readRet = 0;
+        long recCount = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         if (fileSize <= 0) {
             return null;
         }
@@ -1212,9 +1258,11 @@ public class DataConverTool {
                         ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
                 nightSleepHead.setSleepMode(fileContent[4]);
             }
+            recCount += 1;
             arrayList.add(nightSleepHead);
 
             while ((readRet = raf.read(fileContent)) >= 5) {
+                recCount += 1;
                 System.out.println("raf.read ret " + readRet);
                 NightSleepBean nightSleepBean = new NightSleepBean();
                 System.out.println(ByteUtil.toHexString(fileContent));
@@ -1224,6 +1272,7 @@ public class DataConverTool {
                 arrayList.add(nightSleepBean);
             }
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1237,7 +1286,9 @@ public class DataConverTool {
         byte[] fileContent = new byte[7];
         File reportFile = new File(file);
         int readRet = 0;
+        long recCount = 0;
         final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
         if (fileSize <= 0) {
             return null;
         }
@@ -1245,6 +1296,7 @@ public class DataConverTool {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
             while ((readRet = raf.read(fileContent)) >= 7) {
+                recCount += 1;
                 System.out.println("raf.read ret " + readRet);
                 AverageDataBean averageDataBean = new AverageDataBean();
                 averageDataBean.setTimeStamp(ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
@@ -1254,6 +1306,7 @@ public class DataConverTool {
                 arrayList.add(averageDataBean);
             }
             raf.close();
+            getFileInfo().setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }

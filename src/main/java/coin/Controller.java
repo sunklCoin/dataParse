@@ -293,7 +293,8 @@ public class Controller implements Initializable {
         timeZone.setRawOffset(mFileInfoBean.getTimeZone() * 15 * 60 * 1000);
         df.setTimeZone(timeZone);
         String time = df.format(date);
-        String fileInfo = "File name : " + mFileInfoBean.getFileName() + "; Time Stamp : " + time;
+        String fileInfo = "文件名 : " + mFileInfoBean.getFileName() + "; 时间戳 : " + time
+                + "; 文件大小(字节数) : " + mFileInfoBean.getFileSize() + "; 成功匹配的记录条数 : " + mFileInfoBean.getRecordCount();
         setFileInfo(fileInfo);
     }
 

@@ -7,6 +7,8 @@ public class FileInfoBean {
     private String fileType;
     private String version;
     private int timeZone;
+    private long recordCount;
+    private long fileSize;
 
     private static FileInfoBean instance;
     public static FileInfoBean getInstance() {
@@ -62,5 +64,21 @@ public class FileInfoBean {
 
     public String getVersion() {
         return version;
+    }
+
+    public void setRecordCount(long recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public long getRecordCount() {
+        return recordCount;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public long getFileSize() {
+        return fileSize;
     }
 }
