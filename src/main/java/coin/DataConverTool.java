@@ -57,7 +57,7 @@ public class DataConverTool {
     public static final int GPS_DATA_TYPE = 3;
     public static final int SLEEP_DATA_TYPE = 4;
     public static final int AVERAGE_DATA_TYPE = 4;
-
+    public static final int RECORD_TIME_STAMP_DATA_TYPE = 100;
     private FileInfoBean fileInfo;
 
     private int parseTimeZone(String dir[]) {
@@ -93,13 +93,15 @@ public class DataConverTool {
         }
         FileInfoBean fileInfoBean = FileInfoBean.getInstance();//new FileInfoBean();
         fileInfoBean.setFileName(destFile);
-        int index = fileFormat.length - 1;
-        fileInfoBean.setVersion(fileFormat[index--]);
-        fileInfoBean.setFileType(fileFormat[index--]);
-        if (fileType == SPORT_FILE_TYPE || fileType == GPS_DATA_TYPE) {
-            fileInfoBean.setSportType(Integer.parseInt(fileFormat[index--]));
+        if (fileType != RECORD_TIME_STAMP_DATA_TYPE) {
+            int index = fileFormat.length - 1;
+            fileInfoBean.setVersion(fileFormat[index--]);
+            fileInfoBean.setFileType(fileFormat[index--]);
+            if (fileType == SPORT_FILE_TYPE || fileType == GPS_DATA_TYPE) {
+                fileInfoBean.setSportType(Integer.parseInt(fileFormat[index--]));
+            }
+            fileInfoBean.setTimeStamp(Long.parseLong(fileFormat[index]));
         }
-        fileInfoBean.setTimeStamp(Long.parseLong(fileFormat[index]));
         fileInfoBean.setTimeZone(tz);
         this.fileInfo = fileInfoBean;
         return fileInfoBean;
@@ -1313,4 +1315,37 @@ public class DataConverTool {
         return arrayList;
     }
 
+    public ArrayList<RecordTimeStampBean> parseRecordTimeStampData(String file) {
+        FileInfoBean fileInfoBean = ParserFileInfo(file, RECORD_TIME_STAMP_DATA_TYPE);
+        ArrayList<RecordTimeStampBean> arrayList = new ArrayList<RecordTimeStampBean>();
+        byte[] fileContent = new byte[6];
+        File reportFile = new File(file);
+        int readRet = 0;
+        long recCount = 0;
+        final long fileSize = reportFile.length();
+        getFileInfo().setFileSize(fileSize);
+        getFileInfo().setFileType(" ");
+        getFileInfo().setTimeStamp(0);
+        getFileInfo().setVersion(" ");
+        if (fileSize <= 0) {
+            return null;
+        }
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+            raf.seek(0);
+            while ((readRet = raf.read(fileContent)) >= 6) {
+                recCount += 1;
+                System.out.println("raf.read ret " + readRet);
+                RecordTimeStampBean dataBean = new RecordTimeStampBean();
+                dataBean.setTimeStamp(ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
+                dataBean.setSize(ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 4, 6)));
+                arrayList.add(dataBean);
+            }
+            raf.close();
+            getFileInfo().setRecordCount(recCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
 }
