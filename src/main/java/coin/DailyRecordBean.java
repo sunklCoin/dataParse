@@ -1,6 +1,12 @@
 package coin;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class DailyRecordBean {
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /* 2 bytes
      * 15 bit hasSleepData
      * 14 bit hasExceptionHeart
@@ -46,6 +52,9 @@ public class DailyRecordBean {
      */
     private short exceptionHeartRate;
 
+    private long timeOfAp;
+    private long timeOfModem;
+
     public DailyRecordBean() {
         this.hasSleepData = Byte.MIN_VALUE;
         this.hasExceptionHeart = Byte.MIN_VALUE;
@@ -61,6 +70,8 @@ public class DailyRecordBean {
         this.energyState = Byte.MIN_VALUE;
         this.energyStateValue = Short.MIN_VALUE;
         this.exceptionHeartRate = Short.MIN_VALUE;
+        this.timeOfAp = Long.MIN_VALUE;
+        this.timeOfModem = Long.MIN_VALUE;
     }
 
     public void setSportType(byte sportType) {
@@ -206,6 +217,36 @@ public class DailyRecordBean {
         if (heartRate == Short.MIN_VALUE)
             return "null";
         return Short.toString(heartRate);
+    }
+
+    public void setTimeOfAp(long timeOfAp) {
+        this.timeOfAp = timeOfAp;
+    }
+
+    public void setTimeOfModem(long timeOfModem) {
+        this.timeOfModem = timeOfModem;
+    }
+
+    public String getTimeOfAp() {
+        if (timeOfAp == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(timeOfAp * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
+        String tempStr = df.format(temp);
+        return Long.toString(timeOfAp) + "\n" + tempStr;
+    }
+
+    public String getTimeOfModem() {
+        if (timeOfModem == Long.MIN_VALUE)
+            return "null";
+        Date temp = new Date(timeOfModem * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
+        String tempStr = df.format(temp);
+        return Long.toString(timeOfModem) + "\n" + tempStr;
     }
 
     @Override

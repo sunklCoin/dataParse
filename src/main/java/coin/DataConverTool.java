@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class DataConverTool {
+    public static final boolean DEBUG_DAILY_RECORD = true;
     public static final int OUTDOOR_RUNNING_FILE_SIZE = 87;
     public static final int OUTDOOR_WALKING_FILE_SIZE = 87;
     public static final int CROSS_COUNTRY_FILE_SIZE = 87;
@@ -623,7 +624,11 @@ public class DataConverTool {
     public ArrayList<DailyRecordBean> parseDynamicDailyFile(String file) {
         ArrayList<DailyRecordBean> arrayList = new ArrayList<DailyRecordBean>();
         FileInfoBean fileInfoBean = ParserFileInfo(file, DAILY_FILE_TYPE);
-        final int buffSize = DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE;
+        int extraByte = 0;
+        if (DEBUG_DAILY_RECORD) {
+            extraByte = 8;
+        }
+        final int buffSize = DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE + extraByte;
 
         byte[] fileContent = new byte[buffSize];
         File reportFile = new File(file);
@@ -636,18 +641,19 @@ public class DataConverTool {
             raf.seek(0);
             int ret = 0;
             System.out.println("buffSize " + buffSize + " fileSize " + fileSize);
-            while ((ret = raf.read(fileContent)) >= DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE) {
+            while ((ret = raf.read(fileContent)) >= (DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE + extraByte)) {
                 System.out.println("startPos " + startPos);
                 // int ret = raf.read(fileContent, 0, DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE);
                 System.out.println("raf.read ret " + ret);
                 DailyRecordBean parseDailyRecordBean = parseFixLenBuffOfDailyRecord(fileContent);
-                startPos += DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE;
+                startPos += (DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE + extraByte);
                 dataCount += 1;
                 if (parseDailyRecordBean == null) {
                     System.out.println("parseDailyRecordBean is null");
                     raf.close();
                     break;
                 }
+
                 if (parseDailyRecordBean.getHasExceptionHeart() == 1) {
                     byte[] buff = new byte[1];
                     raf.read(buff, 0, 1);
@@ -667,7 +673,11 @@ public class DataConverTool {
     }
 
     private DailyRecordBean parseFixLenBuffOfDailyRecord(byte[] buff) {
-        if (buff == null || buff.length != DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE)
+        int extraByte = 0;
+        if (DEBUG_DAILY_RECORD) {
+            extraByte = 8;
+        }
+        if (buff == null || buff.length != (DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE + extraByte))
             return null;
         DailyRecordBean mDailyRecordBean = new DailyRecordBean();
         byte[] temp = Arrays.copyOfRange(buff, 0, 2); // 2 byte
@@ -712,6 +722,13 @@ public class DataConverTool {
                 ((recordData7 & 0x00001800) >> DAILY_RECORD_ENERGY_STATE_SHIFT_BIT));
         int sign = (recordData7 & 0x00000400) == 0 ? -1 : 1;
         mDailyRecordBean.setEnergyStateValue((short) (sign * (recordData7 & 0x000003ff)));
+
+        if (DEBUG_DAILY_RECORD) {
+            byte[] timeBuff = Arrays.copyOfRange(buff, 10, 14); // 4 byte
+            mDailyRecordBean.setTimeOfAp(ByteUtil.getUnsignedInt(timeBuff));
+            timeBuff = Arrays.copyOfRange(buff, 14, 18); // 4 byte
+            mDailyRecordBean.setTimeOfModem(ByteUtil.getUnsignedInt(timeBuff));
+        }
         return mDailyRecordBean;
     }
 

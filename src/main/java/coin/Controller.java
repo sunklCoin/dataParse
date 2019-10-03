@@ -354,12 +354,23 @@ public class Controller implements Initializable {
         energyStateValueColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("energyStateValue"));
         TableColumn exceptionHeartRateColumn = new TableColumn("异常前心率值");
         exceptionHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("exceptionHeartRate"));
+
+        TableColumn timeOfAp = new TableColumn("AP Time");
+        timeOfAp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfAp"));
+
+        TableColumn timeOfModem = new TableColumn("Modem Time");
+        timeOfModem.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfModem"));
+
         tableView.getColumns().addAll(hasSleepDataColumn,
                 hasExceptionHeartColumn, increaseStepCntColumn,
                 activityTypeColumn, increaseCalorieColumn, actStrongColumn,
                 sportTypeColumn, increaseDistanceColumn, heartRateColumn,
                 dumpEnergyColumn, sleepModeColumn, energyStateColumn,
                 energyStateValueColumn, exceptionHeartRateColumn);
+        if (DataConverTool.DEBUG_DAILY_RECORD) {
+            tableView.getColumns().add(timeOfAp);
+            tableView.getColumns().add(timeOfModem);
+        }
     }
 
     private void loadUserProfileData(UserInfoBean mUserInfoBean) {
