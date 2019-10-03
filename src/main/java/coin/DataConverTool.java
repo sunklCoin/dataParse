@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class DataConverTool {
-    public static final boolean DEBUG_DAILY_RECORD = true;
+    public static final boolean DEBUG_DAILY_RECORD = false;
     public static final int OUTDOOR_RUNNING_FILE_SIZE = 87;
     public static final int OUTDOOR_WALKING_FILE_SIZE = 87;
     public static final int CROSS_COUNTRY_FILE_SIZE = 87;
