@@ -42,6 +42,14 @@
                                       <DropShadow />
                                   </effect>
                               </JFXButton>
+                              <JFXButton fx:id="freshButton" buttonType="RAISED" onAction="#freshDirView" ripplerFill="WHITE" style="-fx-background-color: #495057#495057;" text="fresh" textFill="WHITE">
+                                  <font>
+                                      <Font size="15.0" />
+                                  </font>
+                                  <effect>
+                                      <DropShadow />
+                                  </effect>
+                              </JFXButton>
                           </children>
                       </HBox>
                   </children>

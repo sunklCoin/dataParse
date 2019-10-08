@@ -43,6 +43,8 @@ public class Controller implements Initializable {
     private static final int DAY_SLEEP = 7;
     private static final int NIGHT_SLEEP = 8;
     private static final int AVERAGE_DATA = 9;
+    private static final int REC_TS_DATA = 10;
+    private String dataFilePath = null;
     public Controller() {
     }
 
@@ -118,11 +120,20 @@ public class Controller implements Initializable {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File file = directoryChooser.showDialog(Main.mainStage);
         if (file != null) {
-            String path = file.getPath();//选择的文件夹路径
-            System.out.println("select path " + path);
+            dataFilePath = file.getPath();//选择的文件夹路径
+            System.out.println("select path " + dataFilePath);
             dataList.clear();
-            setTitle(path);
-            recursiveFiles(path);
+            setTitle(dataFilePath);
+            recursiveFiles(dataFilePath);
+        }
+    }
+
+    @FXML
+    private void freshDirView(ActionEvent event) throws IOException {
+        if (dataFilePath != null) {
+            dataList.clear();
+            setTitle(dataFilePath);
+            recursiveFiles(dataFilePath);
         }
     }
 
@@ -153,7 +164,8 @@ public class Controller implements Initializable {
                 if (f.getName().contains("report") || f.getName().contains("record") ||
                         f.getName().contains("gps") || f.getName().contains("profile") ||
                         f.getName().contains("distribute") || f.getName().contains("dsleep") ||
-                        f.getName().contains("nsleep") || f.getName().contains("average")) {
+                        f.getName().contains("nsleep") || f.getName().contains("average")
+                        || f.getName().contains("rec_ts")) {
                     listFile.add(f.getPath());
                     //listFile.add(f.getAbsolutePath());
                     dataList.add(f.getPath());
@@ -194,6 +206,10 @@ public class Controller implements Initializable {
 
             if (filePathName.contains("average")) {
                 return AVERAGE_DATA;
+            }
+
+            if (filePathName.contains("rec_ts")) {
+                return REC_TS_DATA;
             }
         } else if (filePathName.contains("sport")) {
             if (filePathName.contains("record")) {
@@ -283,6 +299,13 @@ public class Controller implements Initializable {
                 loadAverageData(mNAverageData);
             }
             break;
+            case REC_TS_DATA: {
+                ArrayList<RecordTimeStampBean> data = dataConverTool.parseRecordTimeStampData(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadRecordTimeStamp(data);
+            }
+            break;
         }
     }
 
@@ -293,7 +316,8 @@ public class Controller implements Initializable {
         timeZone.setRawOffset(mFileInfoBean.getTimeZone() * 15 * 60 * 1000);
         df.setTimeZone(timeZone);
         String time = df.format(date);
-        String fileInfo = "File name : " + mFileInfoBean.getFileName() + "; Time Stamp : " + time;
+        String fileInfo = "文件名 : " + mFileInfoBean.getFileName() + "; 时间戳 : " + time
+                + "; 文件大小(字节数) : " + mFileInfoBean.getFileSize() + "; 成功匹配的记录条数 : " + mFileInfoBean.getRecordCount();
         setFileInfo(fileInfo);
     }
 
@@ -330,12 +354,23 @@ public class Controller implements Initializable {
         energyStateValueColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("energyStateValue"));
         TableColumn exceptionHeartRateColumn = new TableColumn("异常前心率值");
         exceptionHeartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("exceptionHeartRate"));
+
+        TableColumn timeOfAp = new TableColumn("AP Time");
+        timeOfAp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfAp"));
+
+        TableColumn timeOfModem = new TableColumn("Modem Time");
+        timeOfModem.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfModem"));
+
         tableView.getColumns().addAll(hasSleepDataColumn,
                 hasExceptionHeartColumn, increaseStepCntColumn,
                 activityTypeColumn, increaseCalorieColumn, actStrongColumn,
                 sportTypeColumn, increaseDistanceColumn, heartRateColumn,
                 dumpEnergyColumn, sleepModeColumn, energyStateColumn,
                 energyStateValueColumn, exceptionHeartRateColumn);
+        if (DataConverTool.DEBUG_DAILY_RECORD) {
+            tableView.getColumns().add(timeOfAp);
+            tableView.getColumns().add(timeOfModem);
+        }
     }
 
     private void loadUserProfileData(UserInfoBean mUserInfoBean) {
@@ -814,5 +849,17 @@ public class Controller implements Initializable {
         TableColumn resetingHR = new TableColumn("当日静息心率(次/分钟)");
         resetingHR.setCellValueFactory(new PropertyValueFactory<Object, Object>("resetingHR"));
         tableView.getColumns().addAll(timeStamp, timeZone, averagePress, resetingHR);
+    }
+
+    private void loadRecordTimeStamp(ArrayList<RecordTimeStampBean> dataList) {
+        list.clear();
+        list.addAll(dataList);
+        tableView.getColumns().clear();
+        TableColumn timeStamp = new TableColumn("TimeStamp");
+        timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
+
+        TableColumn size = new TableColumn("Size");
+        size.setCellValueFactory(new PropertyValueFactory<Object, Object>("size"));
+        tableView.getColumns().addAll(timeStamp, size);
     }
 }
