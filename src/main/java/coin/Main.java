@@ -25,17 +25,19 @@ public class Main extends Application {
         Scene mainScene = new Scene(root);
         //mainScene.getStylesheets().add("styles/dark-theme.css");
 
-        primaryStage.setTitle("sport data parser");
+        primaryStage.setTitle("sport data parser-20191010-2.12-v2.3");
         primaryStage.setScene(mainScene);
 
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
-        primaryStage.setWidth(primaryScreenBounds.getWidth());
-        primaryStage.setHeight(primaryScreenBounds.getHeight());
+//        primaryStage.setWidth(primaryScreenBounds.getWidth());
+//        primaryStage.setHeight(primaryScreenBounds.getHeight());
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(960);
 
-        primaryStage.setMinWidth(1000);
-        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(320);
+        primaryStage.setMinHeight(240);
         primaryStage.show();
 
         Main.mainStage = primaryStage;

@@ -81,4 +81,8 @@ public class FileInfoBean {
     public long getFileSize() {
         return fileSize;
     }
+
+    public int getFileVersionNumber() {
+        return Integer.parseInt(this.getVersion().substring(1));
+    }
 }

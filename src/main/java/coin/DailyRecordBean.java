@@ -12,12 +12,24 @@ public class DailyRecordBean {
      * 14 bit hasExceptionHeart
      * 13 ~ 0 increaseStepCnt
      */
+    /* V2.12
+     * 2 bytes
+     * 15 bit N/A
+     * 14 bit hasExceptionHeart
+     * 13 ~ 0 increaseStepCnt
+     */
     private byte hasSleepData;
     private byte hasExceptionHeart;
     private int increaseStepCnt;
     /* 1 byte
      * 7~4 activityType
      * 3~0 increaseCalorie
+     */
+
+    /* V2.12
+     * 1 byte
+     * 7~6 activityType
+     * 5~0 increaseCalorie
      */
     private byte activityType;
     private byte increaseCalorie;
@@ -44,7 +56,15 @@ public class DailyRecordBean {
      * 12~11  bit energyState
      * 10~0   bit energyStateValue
      */
+
+    /* v2.12
+     * 2 bytes
+     * 15~10 bit new increase total calorie
+     * 9~8  bit energyState
+     * 7~0  bit energyStateValue
+     */
     private byte sleepMode;
+    private byte newIncreaseTotalCal;
     private byte energyState;
     private short energyStateValue;
     /* 1 byte
@@ -72,6 +92,7 @@ public class DailyRecordBean {
         this.exceptionHeartRate = Short.MIN_VALUE;
         this.timeOfAp = Long.MIN_VALUE;
         this.timeOfModem = Long.MIN_VALUE;
+        this.newIncreaseTotalCal = Byte.MIN_VALUE;
     }
 
     public void setSportType(byte sportType) {
@@ -130,6 +151,13 @@ public class DailyRecordBean {
         this.sleepMode = sleepMode;
     }
 
+    /**
+     * @param newIncreaseTotalCal the newIncreaseTotalCal to set
+     */
+    public void setNewIncreaseTotalCal(byte newIncreaseTotalCal) {
+        this.newIncreaseTotalCal = newIncreaseTotalCal;
+    }
+
     public String getActivityType() {
         /*return activityType;*/
         if (activityType == Byte.MIN_VALUE)
@@ -174,6 +202,15 @@ public class DailyRecordBean {
             return "null";
         return Byte.toString(sleepMode);
         // return sleepMode;
+    }
+
+    /**
+     * @return the newIncreaseTotalCal
+     */
+    public String getNewIncreaseTotalCal() {
+        if (newIncreaseTotalCal == Byte.MIN_VALUE)
+            return "null";
+        return Byte.toString(newIncreaseTotalCal);
     }
 
     public String getSportType() {

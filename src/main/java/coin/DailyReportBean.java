@@ -8,6 +8,8 @@ import java.util.TimeZone;
 public class DailyReportBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private long    totalStepCount;     // 4 bytes  0~3
+
+    //v2.12 current total activity calorie
     private int     totalCalorie;       // 2 bytes
     private short   currHeartRate;      // 1 bytes
     private short   restingHeartRate;   // 1 bytes
@@ -20,6 +22,10 @@ public class DailyReportBean {
     private short   maxPressure;        // 1 bytes
     private short   minPressure;        // 1 bytes
     private String     standFlag;          // 3 bytes
+    //v2.12 2bytes
+    private int currTotalCal;
+    //v2.12 2bytes
+    private int remainRecoverTime;
 
     public DailyReportBean() {
         this.totalStepCount      = Long.MIN_VALUE ;
@@ -35,6 +41,8 @@ public class DailyReportBean {
         this.maxPressure         = Short.MIN_VALUE ;
         this.minPressure         = Short.MIN_VALUE ;
         this.standFlag           = "none" ;
+        this.currTotalCal        = Integer.MIN_VALUE ;
+        this.remainRecoverTime   = Integer.MIN_VALUE ;
     }
 
     public String getTotalStepCount() {
@@ -136,6 +144,24 @@ public class DailyReportBean {
         return Short.toString(restingHeartRate);
     }
 
+    /**
+     * @return the currTotalCal
+     */
+    public String getCurrTotalCal() {
+        if (currTotalCal == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(currTotalCal);
+    }
+
+    /**
+     * @return the remainRecoverTime
+     */
+    public String getRemainRecoverTime() {
+        if (remainRecoverTime == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(remainRecoverTime);
+    }
+
     public void setTotalStepCount(long totalStepCount) {
         this.totalStepCount = totalStepCount;
     }
@@ -186,6 +212,20 @@ public class DailyReportBean {
 
     public void setTotalCalorie(int totalCalorie) {
         this.totalCalorie = totalCalorie;
+    }
+
+    /**
+     * @param currTotalCal the currTotalCal to set
+     */
+    public void setCurrTotalCal(int currTotalCal) {
+        this.currTotalCal = currTotalCal;
+    }
+
+    /**
+     * @param remainRecoverTime the remainRecoverTime to set
+     */
+    public void setRemainRecoverTime(int remainRecoverTime) {
+        this.remainRecoverTime = remainRecoverTime;
     }
 
     @Override

@@ -28,6 +28,8 @@ public class NightSleepBean {
 
     private long changeOfTimeStamp;
     private byte sleepMode;
+    // v2.12
+    private short totalScoreFriendly;
 
     public NightSleepBean() {
         totalSleepScore              = Short.MIN_VALUE;
@@ -50,6 +52,7 @@ public class NightSleepBean {
         soberDuration                = Integer.MIN_VALUE;
         changeOfTimeStamp            = Long.MIN_VALUE;
         sleepMode                    = Byte.MIN_VALUE;
+        totalScoreFriendly           = Short.MIN_VALUE;
     }
 
     public void setChangeOfTimeStamp(long changeTimeStamp) {
@@ -239,5 +242,21 @@ public class NightSleepBean {
 
     public void setWakeupCount(short wakeupCount) {
         this.wakeupCount = wakeupCount;
+    }
+
+    /**
+     * @return the totalScoreFriendly
+     */
+    public String getTotalScoreFriendly() {
+        if (totalScoreFriendly == Short.MIN_VALUE)
+            return "";
+        return Short.toString(totalScoreFriendly);
+    }
+
+    /**
+     * @param totalScoreFriendly the totalScoreFriendly to set
+     */
+    public void setTotalScoreFriendly(short totalScoreFriendly) {
+        this.totalScoreFriendly = totalScoreFriendly;
     }
 }

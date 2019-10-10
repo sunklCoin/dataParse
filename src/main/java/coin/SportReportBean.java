@@ -1,15 +1,15 @@
 package coin;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+// import java.math.BigDecimal;
+// import java.math.MathContext;
+// import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static java.math.MathContext.DECIMAL32;
+// import static java.math.MathContext.DECIMAL32;
 
 public class SportReportBean {
     public static final DecimalFormat df2 = new DecimalFormat("0.00");
@@ -49,6 +49,9 @@ public class SportReportBean {
     private int bestSwolf; // 2bytes
     private short poolWidth; //
 
+    //v2.12
+    private int totalCalorie; // 2 bytes
+
     public SportReportBean() {
         this.startTime = Long.MIN_VALUE;
         this.endTime = Long.MIN_VALUE;
@@ -84,6 +87,7 @@ public class SportReportBean {
         this.aveSwolf = Integer.MIN_VALUE; // 2bytes
         this.bestSwolf = Integer.MIN_VALUE; // 2bytes
         this.poolWidth = Short.MIN_VALUE; // 1bytes
+        this.totalCalorie = Integer.MIN_VALUE;
     }
 
     public String getAsendTotal() {
@@ -432,6 +436,22 @@ public class SportReportBean {
 
     public void setWarmupTime(long warmupTime) {
         this.warmupTime = warmupTime;
+    }
+
+    /**
+     * @return the totalCalorie
+     */
+    public String getTotalCalorie() {
+        if (totalCalorie == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(totalCalorie);
+    }
+
+    /**
+     * @param totalCalorie the totalCalorie to set
+     */
+    public void setTotalCalorie(int totalCalorie) {
+        this.totalCalorie = totalCalorie;
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.prefs.Preferences;
 
 public class Controller implements Initializable {
 
@@ -45,7 +46,17 @@ public class Controller implements Initializable {
     private static final int AVERAGE_DATA = 9;
     private static final int REC_TS_DATA = 10;
     private String dataFilePath = null;
+    private DirectoryChooser directoryChooser;
+    private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
     public Controller() {
+        directoryChooser = new DirectoryChooser();
+        String lastPath = pref.get("lastPath", "");
+        if(!lastPath.equals("")) {
+            File lastFile = new File(lastPath);
+            if (lastFile.exists()) {
+                directoryChooser.setInitialDirectory(lastFile);
+            }
+        }
     }
 
     @FXML
@@ -117,10 +128,15 @@ public class Controller implements Initializable {
 
     @FXML
     private void selectDirView(ActionEvent event) throws IOException {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
+        if (directoryChooser == null) {
+            return;
+        }
         File file = directoryChooser.showDialog(Main.mainStage);
-        if (file != null) {
+
+        if (file != null && file.exists()) {
+            directoryChooser.setInitialDirectory(file);
             dataFilePath = file.getPath();//选择的文件夹路径
+            pref.put("lastPath", dataFilePath);
             System.out.println("select path " + dataFilePath);
             dataList.clear();
             setTitle(dataFilePath);
@@ -326,16 +342,28 @@ public class Controller implements Initializable {
         //list.add(mDailyRecordBean);
         list.addAll(mDailyRecordBeanList);
         tableView.getColumns().clear();
-        TableColumn hasSleepDataColumn = new TableColumn("是否包含睡眠数据");
-        hasSleepDataColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("hasSleepData"));
+        int verNo = FileInfoBean.getInstance().getFileVersionNumber();
+        if (verNo == 1) {
+            TableColumn hasSleepDataColumn = new TableColumn("是否包含睡眠数据");
+            hasSleepDataColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("hasSleepData"));
+            tableView.getColumns().add(hasSleepDataColumn);
+        }
         TableColumn hasExceptionHeartColumn = new TableColumn("是否包含异常心率升高记录");
         hasExceptionHeartColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("hasExceptionHeart"));
         TableColumn increaseStepCntColumn = new TableColumn("新增步数");
         increaseStepCntColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseStepCnt"));
-        TableColumn activityTypeColumn = new TableColumn("活动类型");
-        activityTypeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("activityType"));
+
+        TableColumn activityTypeColumn = new TableColumn("活动类型");;
         TableColumn increaseCalorieColumn = new TableColumn("新增卡路里");
+
+        if (verNo >= 2) {
+            activityTypeColumn = new TableColumn("活动类型\n0）未知；1）静止；2）走；3）跑");
+            increaseCalorieColumn = new TableColumn("新增活动卡路里");
+        }
+        activityTypeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("activityType"));
         increaseCalorieColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("increaseCalorie"));
+
+
         TableColumn actStrongColumn = new TableColumn("活动强度等级\n0[静止]1[微弱]2[低强度]\n3[中等强度]4[高强度]\n5[剧烈]7[未知]");
         actStrongColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("actStrong"));
         TableColumn sportTypeColumn = new TableColumn("运动类型\n0[无]1[户外跑步]2[户外健走]\n3[室内跑步]4[登山]5[越野]\n6[户外骑行]7[室内骑行]8[自由训练]\n9[泳池游泳]10[开放水域游泳]");
@@ -346,8 +374,18 @@ public class Controller implements Initializable {
         heartRateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("heartRate"));
         TableColumn dumpEnergyColumn = new TableColumn("剩余能量（0~100）");
         dumpEnergyColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("dumpEnergy"));
-        TableColumn sleepModeColumn = new TableColumn("睡眠模式\n0[未睡觉]2[深睡]\n3[浅睡]4[快速眼动]5[清醒]");
-        sleepModeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
+        if (verNo == 1) {
+            TableColumn sleepModeColumn = new TableColumn("睡眠模式\n0[未睡觉]2[深睡]\n3[浅睡]4[快速眼动]5[清醒]");
+            sleepModeColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("sleepMode"));
+            tableView.getColumns().add(sleepModeColumn);
+        }
+
+        if (verNo >= 2) {
+            TableColumn newIncreaseTotalCal = new TableColumn("新增总卡路里");
+            newIncreaseTotalCal.setCellValueFactory(new PropertyValueFactory<Object, Object>("newIncreaseTotalCal"));
+            tableView.getColumns().add(newIncreaseTotalCal);
+        }
+
         TableColumn energyStateColumn = new TableColumn("能量状态\n0[未知]1[运动(0~100)]\n" + "2[压力(-100~0)]3[恢复(0~100)]");
         energyStateColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("energyState"));
         TableColumn energyStateValueColumn = new TableColumn("能量状态值[-100~+100]");
@@ -361,12 +399,12 @@ public class Controller implements Initializable {
         TableColumn timeOfModem = new TableColumn("Modem Time");
         timeOfModem.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeOfModem"));
 
-        tableView.getColumns().addAll(hasSleepDataColumn,
-                hasExceptionHeartColumn, increaseStepCntColumn,
+        tableView.getColumns().addAll(hasExceptionHeartColumn, increaseStepCntColumn,
                 activityTypeColumn, increaseCalorieColumn, actStrongColumn,
                 sportTypeColumn, increaseDistanceColumn, heartRateColumn,
-                dumpEnergyColumn, sleepModeColumn, energyStateColumn,
+                dumpEnergyColumn, energyStateColumn,
                 energyStateValueColumn, exceptionHeartRateColumn);
+
         if (DataConverTool.DEBUG_DAILY_RECORD) {
             tableView.getColumns().add(timeOfAp);
             tableView.getColumns().add(timeOfModem);
@@ -405,10 +443,17 @@ public class Controller implements Initializable {
         list.clear();
         list.add(mDailyReportBean);
         tableView.getColumns().clear();
+
+        int verNo = FileInfoBean.getInstance().getFileVersionNumber();
+
         TableColumn totalStepCountColumn = new TableColumn("当前总步数\n(步)");
         totalStepCountColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalStepCount"));
         TableColumn totalCalorieColumn = new TableColumn("当前总卡路里\n(千卡)");
+        if (verNo >= 2) {
+            totalCalorieColumn = new TableColumn("当前总活动卡路里\n(千卡)");
+        }
         totalCalorieColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalCalorie"));
+
         TableColumn currHeartRateCntColumn = new TableColumn("当前心率\n(次/分钟)");
         currHeartRateCntColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("currHeartRate"));
         TableColumn restingHeartRateColumn = new TableColumn("当日静息心率\n(次/分钟)");
@@ -436,6 +481,14 @@ public class Controller implements Initializable {
                 timeOfmaxHeartRateColumn, minHeartRateColumn, timeOfminHeartRateColumn,
                 avgHeartRateColumn, avgPressureColumn, maxPressureColumn,
                 minPressureColumn, standFlagColumn);
+        if (verNo >= 2) {
+            TableColumn currTotalCal = new TableColumn("当前总卡路里");
+            currTotalCal.setCellValueFactory(new PropertyValueFactory<Object, Object>("currTotalCal"));
+            tableView.getColumns().add(currTotalCal);
+            TableColumn remainRecoverTime = new TableColumn("剩余恢复时间");
+            remainRecoverTime.setCellValueFactory(new PropertyValueFactory<Object, Object>("remainRecoverTime"));
+            tableView.getColumns().add(remainRecoverTime);
+        }
     }
 
     private void loadSportReportData(SportReportBean mSportReportBean, int sportType) {
@@ -454,6 +507,9 @@ public class Controller implements Initializable {
         totalDistance.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalDistance"));
 
         TableColumn calorie = new TableColumn("卡路里\n(千卡)");
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            calorie = new TableColumn("活动卡路里\n(千卡)");
+        }
         calorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("calorie"));
 
         TableColumn maxPace = new TableColumn("最快配速\n(秒/公里 | 秒/百米)");
@@ -566,6 +622,12 @@ public class Controller implements Initializable {
             }
             break;
         }
+
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            TableColumn totalCalorie = new TableColumn("总卡路里\n(千卡)");
+            totalCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalCalorie"));
+            tableView.getColumns().add(totalCalorie);
+        }
         /*tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -673,6 +735,9 @@ public class Controller implements Initializable {
                 swTotalKm.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalKm"));
 
                 TableColumn swTotalCalorie = new TableColumn("累计卡路里（千卡）");
+                if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+                    swTotalCalorie = new TableColumn("累计活动卡路里（千卡）");
+                }
                 swTotalCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("swTotalCalorie"));
 
                 TableColumn swTotalStroke = new TableColumn("累计划水次数（次）");
@@ -703,6 +768,11 @@ public class Controller implements Initializable {
                         swCurrBarPace, swCurrBarSwolf, swTotalKm, swTotalCalorie, swTotalStroke, swTotalTurn,
                         swCurrBarFq, swCurrBarUnKnowStrokeCnt, swCurrBarBreastCnt, swCurrBarFreeCnt,
                         swCurrBarBackCnt, swCurrBarButterflyCnt);
+                if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+                    TableColumn swAllCalorie = new TableColumn("累计总卡路里（千卡）");
+                    swAllCalorie.setCellValueFactory(new PropertyValueFactory<Object, Object>("swAllCalorie"));
+                    tableView.getColumns().add(swAllCalorie);
+                }
                 break;
         }
     }
@@ -820,6 +890,12 @@ public class Controller implements Initializable {
 
         TableColumn soberDuration = new TableColumn("夜间睡眠-清醒时长(分钟)");
         soberDuration.setCellValueFactory(new PropertyValueFactory<Object, Object>("soberDuration"));
+
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            TableColumn totalScoreFriendly = new TableColumn("夜间睡眠总分友好版");
+            totalScoreFriendly.setCellValueFactory(new PropertyValueFactory<Object, Object>("totalScoreFriendly"));
+            tableView.getColumns().add(totalScoreFriendly);
+        }
 
         TableColumn changeOfTimeStamp = new TableColumn("睡眠模式变动的时间戳");
         changeOfTimeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("changeOfTimeStamp"));

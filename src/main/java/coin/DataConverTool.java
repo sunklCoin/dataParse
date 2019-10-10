@@ -19,7 +19,9 @@ public class DataConverTool {
     public static final int FREE_TRAIAING_FILE_SIZE = 44;
     public static final int INDOOR_SWIMMING_FILE_SIZE = 40;
     public static final int OPEN_WATER_SWIMMING_FILE_SIZE = 40;
+    public static final int SPORT_REPORT_V2_FILE_SIZE_GAP = 2;
     public static final int DAILY_ACTIVITY_REPORT_FILE_SIZE = 25;
+    public static final int DAILY_ACTIVITY_REPORT_FILE_SIZE_V2 = 29;
     public static final int USER_PROFLE_FILE_SIZE = 20;
     public static final int DAILY_RECORD_DYNAMIC_BUFF_MAX_SIZE = 11;
     public static final int DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE = 10;
@@ -30,14 +32,18 @@ public class DataConverTool {
     public static final int SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE = 2;
     public static final int SPORT_RECORD_TYPE5_DYNAMIC_BUFF_MIN_SIZE = 10;
     public static final int SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE = 14;
+    public static final int SPORT_RECORD_TYPE5_DYNAMIC_BUFF_V2_LEFT_SIZE = 16;
 
     public static final int DAILY_RECORD_HAS_SLEEP_FLAG_BIT = 15;
     public static final int DAILY_RECORD_EXCEPTION_HEART_FLAG_BIT = 14;
     public static final int DAILY_RECORD_ACTIVITY_TYPE_SHIFT_BIT = 4;
+    public static final int DAILY_RECORD_ACTIVITY_TYPE_SHIFT_BIT_V2 = 6;
     public static final int DAILY_RECORD_ACT_STRONG_SHIFT_BIT = 5;
 
     public static final int DAILY_RECORD_SLEEP_MODE_SHIFT_BIT = 13;
+    public static final int DAILY_RECORD_SLEEP_MODE_SHIFT_BIT_V2 = 10;
     public static final int DAILY_RECORD_ENERGY_STATE_SHIFT_BIT = 11;
+    public static final int DAILY_RECORD_ENERGY_STATE_SHIFT_BIT_V2 = 8;
     public static final int GPS_DATA_FIX_SIZE = 12;
     public static final int DAILY_DISTRIBUTE_FILE_SIZE = 18;
 
@@ -149,6 +155,9 @@ public class DataConverTool {
                 size = OPEN_WATER_SWIMMING_FILE_SIZE;
                 break;
         }
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            size += SPORT_REPORT_V2_FILE_SIZE_GAP;
+        }
         return size;
     }
 
@@ -194,8 +203,6 @@ public class DataConverTool {
 
     private SportReportBean parserOutdoorRunning(final byte[] fileContent) {
         SportReportBean sportReportBean = new SportReportBean();
-        byte[] temp = Arrays.copyOfRange(fileContent, 0, 4);
-
         sportReportBean.setStartTime(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 0, 4)));
 
@@ -277,6 +284,10 @@ public class DataConverTool {
 
         sportReportBean.setWarmupTime(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 83, 87)));
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            sportReportBean.setTotalCalorie(ByteUtil.getUnsignedShort(
+                Arrays.copyOfRange(fileContent, 87, 89)));
+        }
         return sportReportBean;
     }
 
@@ -344,6 +355,10 @@ public class DataConverTool {
 
         sportReportBean.setWarmupTime(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 59, 63)));
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            sportReportBean.setTotalCalorie(ByteUtil.getUnsignedShort(
+                Arrays.copyOfRange(fileContent, 63, 65)));
+        }
         return sportReportBean;
     }
 
@@ -425,6 +440,10 @@ public class DataConverTool {
 
         sportReportBean.setWarmupTime(ByteUtil.getUnsignedInt(
                 Arrays.copyOfRange(fileContent, 77, 81)));
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            sportReportBean.setTotalCalorie(ByteUtil.getUnsignedShort(
+                Arrays.copyOfRange(fileContent, 81, 83)));
+        }
         return sportReportBean;
     }
 
@@ -466,6 +485,10 @@ public class DataConverTool {
         sportReportBean.setFatBurningTime(ByteUtil.getUnsignedInt(fourBytebuff));
         fourBytebuff = Arrays.copyOfRange(fileContent, 40, 44);  // 4 bytes
         sportReportBean.setWarmupTime(ByteUtil.getUnsignedInt(fourBytebuff));
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            sportReportBean.setTotalCalorie(ByteUtil.getUnsignedShort(
+                Arrays.copyOfRange(fileContent, 44, 46)));
+        }
         return sportReportBean;
     }
 
@@ -506,12 +529,20 @@ public class DataConverTool {
         sportReportBean.setBestSwolf(ByteUtil.getUnsignedShort(doubleBytebuff));
         singleBytebuff = Arrays.copyOfRange(fileContent, 39, 40);       // 1 byte
         sportReportBean.setPoolWidth(ByteUtil.getUnsignedChar(singleBytebuff));
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            sportReportBean.setTotalCalorie(ByteUtil.getUnsignedShort(
+                Arrays.copyOfRange(fileContent, 40, 42)));
+        }
         return sportReportBean;
     }
 
     public DailyReportBean parseDailyReport(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, DAILY_FILE_TYPE);
-        final int byteSize = DAILY_ACTIVITY_REPORT_FILE_SIZE;
+        int extraByte = 0;
+        if (fileInfoBean.getFileVersionNumber() >= 2){
+            extraByte = DAILY_ACTIVITY_REPORT_FILE_SIZE_V2 - DAILY_ACTIVITY_REPORT_FILE_SIZE;
+        }
+        final int byteSize = DAILY_ACTIVITY_REPORT_FILE_SIZE + extraByte;
         if (byteSize == 0) {
             return null;
         }
@@ -563,7 +594,12 @@ public class DataConverTool {
 
         byte[] threeBytebuff = Arrays.copyOfRange(fileContent, 22, 25); // 3 bytes
         mDailyReportBean.setStandFlag(ByteUtil.toHexString(threeBytebuff));
-
+        if (FileInfoBean.getInstance().getFileVersionNumber() >= 2) {
+            doubleBytebuff = Arrays.copyOfRange(fileContent, 25, 27);
+            mDailyReportBean.setCurrTotalCal(ByteUtil.getUnsignedShort(doubleBytebuff));
+            doubleBytebuff = Arrays.copyOfRange(fileContent, 27, 29);
+            mDailyReportBean.setRemainRecoverTime(ByteUtil.getUnsignedShort(doubleBytebuff));
+        }
         return mDailyReportBean;
     }
 
@@ -571,9 +607,9 @@ public class DataConverTool {
     public UserInfoBean parseUserProfile(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, USER_PROFILE_TYPE);
         final int byteSize = USER_PROFLE_FILE_SIZE;
-        if (byteSize == 0) {
-            return null;
-        }
+        // if (byteSize == 0) {
+        //     return null;
+        // }
         File reportFile = new File(file);
         fileInfoBean.setFileSize(reportFile.length());
         byte[] fileContent = new byte[byteSize];
@@ -636,6 +672,8 @@ public class DataConverTool {
         final long fileSize = reportFile.length();
         int startPos = 0;
         int dataCount = 0;
+        int version = 1;
+        version = fileInfoBean.getFileVersionNumber();
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
@@ -645,7 +683,7 @@ public class DataConverTool {
                 System.out.println("startPos " + startPos);
                 // int ret = raf.read(fileContent, 0, DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE);
                 System.out.println("raf.read ret " + ret);
-                DailyRecordBean parseDailyRecordBean = parseFixLenBuffOfDailyRecord(fileContent);
+                DailyRecordBean parseDailyRecordBean = parseFixLenBuffOfDailyRecord(fileContent, version);
                 startPos += (DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE + extraByte);
                 dataCount += 1;
                 if (parseDailyRecordBean == null) {
@@ -672,7 +710,7 @@ public class DataConverTool {
         return arrayList;
     }
 
-    private DailyRecordBean parseFixLenBuffOfDailyRecord(byte[] buff) {
+    private DailyRecordBean parseFixLenBuffOfDailyRecord(byte[] buff, int version) {
         int extraByte = 0;
         if (DEBUG_DAILY_RECORD) {
             extraByte = 8;
@@ -682,18 +720,26 @@ public class DataConverTool {
         DailyRecordBean mDailyRecordBean = new DailyRecordBean();
         byte[] temp = Arrays.copyOfRange(buff, 0, 2); // 2 byte
         int recordData1 = ByteUtil.getUnsignedShort(temp);
-        mDailyRecordBean.setHasSleepData((byte)
+        if (version == 1) {
+            mDailyRecordBean.setHasSleepData((byte)
                 ((recordData1 & 0x00008000) >> DAILY_RECORD_HAS_SLEEP_FLAG_BIT));
+        }
         mDailyRecordBean.setHasExceptionHeart((byte)
                 ((recordData1 & 0x00004000) >> DAILY_RECORD_EXCEPTION_HEART_FLAG_BIT));
         mDailyRecordBean.setIncreaseStepCnt(recordData1 & 0x00003FFF);
 
         byte[] recordData2Buff = Arrays.copyOfRange(buff, 2, 3); // 1 byte
         short recordData2 = ByteUtil.getUnsignedChar(recordData2Buff);
-        mDailyRecordBean.setActivityType((byte)
+        if (version >= 2) {
+            mDailyRecordBean.setActivityType((byte)
+                ((recordData2 & 0x00C0) >> DAILY_RECORD_ACTIVITY_TYPE_SHIFT_BIT_V2));
+            mDailyRecordBean.setIncreaseCalorie((byte)(recordData2 & 0x003F));
+        } else {
+            mDailyRecordBean.setActivityType((byte)
                 ((recordData2 & 0x00F0) >> DAILY_RECORD_ACTIVITY_TYPE_SHIFT_BIT));
-        mDailyRecordBean.setIncreaseCalorie((byte)
-                (recordData2 & 0x000F));
+            mDailyRecordBean.setIncreaseCalorie((byte)
+                    (recordData2 & 0x000F));
+        }
 
         byte[] recordData3Buff = Arrays.copyOfRange(buff, 3, 4); // 1 byte
         short recordData3 = ByteUtil.getUnsignedChar(recordData3Buff);
@@ -716,12 +762,22 @@ public class DataConverTool {
         byte[] recordData7Buff = Arrays.copyOfRange(buff, 8, 10); // 2 byte
         int recordData7 = ByteUtil.getUnsignedShort(recordData7Buff);
         System.out.println("recordData7 " + recordData7);
-        mDailyRecordBean.setSleepMode((byte)
+
+        if (version >= 2) {
+            mDailyRecordBean.setNewIncreaseTotalCal((byte)
+                ((recordData7 & 0x0000FC00) >> DAILY_RECORD_SLEEP_MODE_SHIFT_BIT_V2));
+            mDailyRecordBean.setEnergyState((byte)
+                    ((recordData7 & 0x00000300) >> DAILY_RECORD_ENERGY_STATE_SHIFT_BIT_V2));
+            int sign = (recordData7 & 0x00000080) == 0 ? -1 : 1;
+            mDailyRecordBean.setEnergyStateValue((short) (sign * (recordData7 & 0x0000007f)));
+        } else {
+            mDailyRecordBean.setSleepMode((byte)
                 ((recordData7 & 0x0000e000) >> DAILY_RECORD_SLEEP_MODE_SHIFT_BIT));
-        mDailyRecordBean.setEnergyState((byte)
-                ((recordData7 & 0x00001800) >> DAILY_RECORD_ENERGY_STATE_SHIFT_BIT));
-        int sign = (recordData7 & 0x00000400) == 0 ? -1 : 1;
-        mDailyRecordBean.setEnergyStateValue((short) (sign * (recordData7 & 0x000003ff)));
+            mDailyRecordBean.setEnergyState((byte)
+                    ((recordData7 & 0x00001800) >> DAILY_RECORD_ENERGY_STATE_SHIFT_BIT));
+            int sign = (recordData7 & 0x00000400) == 0 ? -1 : 1;
+            mDailyRecordBean.setEnergyStateValue((short) (sign * (recordData7 & 0x000003ff)));
+        }
 
         if (DEBUG_DAILY_RECORD) {
             byte[] timeBuff = Arrays.copyOfRange(buff, 10, 14); // 4 byte
@@ -949,7 +1005,7 @@ public class DataConverTool {
         long recCount = 0;
             final long fileSize = reportFile.length();
         getFileInfo().setFileSize(fileSize);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+        // DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
@@ -961,8 +1017,8 @@ public class DataConverTool {
                 long resumeTimeStamp = ByteUtil.getUnsignedInt(Arrays.copyOfRange(headBuff, 4, 8));
                 startPos += readRet;
                 System.out.println("startPos " + startPos + " filePointer " + raf.getFilePointer());
-                Date date = new Date(resumeTimeStamp);
-                String dtStr = df.format(date);
+                // Date date = new Date(resumeTimeStamp);
+                // String dtStr = df.format(date);
                 if (recordeCnt * SPORT_RECORD_TYPE4_DYNAMIC_BUFF_SIZE >= fileSize) {
                     break;
                 }
@@ -1000,9 +1056,9 @@ public class DataConverTool {
         final int byteSize = GPS_DATA_FIX_SIZE;
         long recCount = 0;
         ArrayList<GpsDataBean> arrayList = new ArrayList<GpsDataBean>();
-        if (byteSize == 0) {
-            return null;
-        }
+        // if (byteSize == 0) {
+        //     return null;
+        // }
         byte[] fileContent = new byte[byteSize];
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
@@ -1028,7 +1084,8 @@ public class DataConverTool {
                 gpsDataBean.setLat(ByteUtil.getFloat(Arrays.copyOfRange(fileContent, 8, 12)));
                 arrayList.add(gpsDataBean);
             }
-            getFileInfo().setRecordCount(recCount);
+            raf.close();
+            fileInfoBean.setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1039,9 +1096,9 @@ public class DataConverTool {
     public DailyDistributeBean parseDailyDistribute(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, USER_PROFILE_TYPE);
         final int byteSize = DAILY_DISTRIBUTE_FILE_SIZE;
-        if (byteSize == 0) {
-            return null;
-        }
+        // if (byteSize == 0) {
+        //     return null;
+        // }
         File dataFile = new File(file);
         fileInfoBean.setFileSize(dataFile.length());
         byte[] fileContent = new byte[byteSize];
@@ -1062,7 +1119,7 @@ public class DataConverTool {
     private DailyDistributeBean parseDailyDistributeData(final byte[] fileContent) {
         DailyDistributeBean mDailyDistributeBean = new DailyDistributeBean();
 
-        byte[] doubleBytebuff = Arrays.copyOfRange(fileContent, 0, 2); // 2 byte
+        // byte[] doubleBytebuff = Arrays.copyOfRange(fileContent, 0, 2); // 2 byte
         mDailyDistributeBean.setSeriousPressDur(
                 ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 0, 2)));
 
@@ -1101,7 +1158,7 @@ public class DataConverTool {
         int readRet = 0;
         final long fileSize = reportFile.length();
         getFileInfo().setFileSize(fileSize);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+        // DateFormat df = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
         int startPos = 0;
         long recCount = 0;
         try {
@@ -1135,25 +1192,35 @@ public class DataConverTool {
                         sportRecordType1Bean.setSwCurrBarSwolf(
                                 ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 8, 10)));
                         if (fileContent[0] == 0x00) {
-                            byte[] leftBuff = new byte[SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE];
+                            int extraByte = 0;
+                            if (getFileInfo().getFileVersionNumber() >= 2) {
+                                extraByte = SPORT_RECORD_TYPE5_DYNAMIC_BUFF_V2_LEFT_SIZE
+                                    - SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE;
+                            }
+                            final int leftBuffSize = SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE + extraByte;
+                            byte[] leftBuff = new byte[leftBuffSize];
                             readRet = raf.read(leftBuff);
-                            if (readRet >= SPORT_RECORD_TYPE5_DYNAMIC_BUFF_LEFT_SIZE) {
+                            if (readRet >= leftBuffSize) {
                                 startPos += readRet;
                                 System.out.println("raf.read ret " + readRet);
                                 sportRecordType1Bean.setSwTotalKm(
-                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 0, 2)));
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(leftBuff, 0, 2)));
                                 sportRecordType1Bean.setSwTotalCalorie(
-                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 2, 4)));
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(leftBuff, 2, 4)));
                                 sportRecordType1Bean.setSwTotalStroke(
-                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 4, 6)));
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(leftBuff, 4, 6)));
                                 sportRecordType1Bean.setSwTotalTurn(
-                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(fileContent, 6, 8)));
-                                sportRecordType1Bean.setSwCurrBarFq(fileContent[8]);
-                                sportRecordType1Bean.setSwCurrBarUnKnowStrokeCnt(fileContent[9]);
-                                sportRecordType1Bean.setSwCurrBarBreastCnt(fileContent[10]);
-                                sportRecordType1Bean.setSwCurrBarFreeCnt(fileContent[11]);
-                                sportRecordType1Bean.setSwCurrBarBackCnt(fileContent[12]);
-                                sportRecordType1Bean.setSwCurrBarButterflyCnt(fileContent[13]);
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(leftBuff, 6, 8)));
+                                sportRecordType1Bean.setSwCurrBarFq(leftBuff[8]);
+                                sportRecordType1Bean.setSwCurrBarUnKnowStrokeCnt(leftBuff[9]);
+                                sportRecordType1Bean.setSwCurrBarBreastCnt(leftBuff[10]);
+                                sportRecordType1Bean.setSwCurrBarFreeCnt(leftBuff[11]);
+                                sportRecordType1Bean.setSwCurrBarBackCnt(leftBuff[12]);
+                                sportRecordType1Bean.setSwCurrBarButterflyCnt(leftBuff[13]);
+                                if (getFileInfo().getFileVersionNumber() >= 2) {
+                                    sportRecordType1Bean.setSwAllCalorie(
+                                        ByteUtil.getUnsignedShort(Arrays.copyOfRange(leftBuff, 14, 16)));
+                                }
                             }
                         }
                         arrayList.add(sportRecordType1Bean);
@@ -1186,6 +1253,7 @@ public class DataConverTool {
             byte[] headBuff = new byte[2];
             readRet = raf.read(headBuff);
             if (readRet < 2) {
+                raf.close();
                 return null;
             }
             int sleepDur = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 0, 2));
@@ -1209,7 +1277,7 @@ public class DataConverTool {
                 arrayList.add(dailySleepBean);
             }
             raf.close();
-            getFileInfo().setRecordCount(recCount);
+            fileInfoBean.setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1233,9 +1301,13 @@ public class DataConverTool {
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "r");
             raf.seek(0);
-            byte[] headBuff = new byte[26];
+            int extraByte = 0;
+            if (fileInfoBean.getFileVersionNumber() >= 2) {
+                extraByte = 1;
+            }
+            byte[] headBuff = new byte[26 + extraByte];
             readRet = raf.read(headBuff);
-            if (readRet < 26) {
+            if (readRet < 26 + extraByte) {
                 return null;
             }
             short totalSleepScore = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 0, 1));
@@ -1256,6 +1328,7 @@ public class DataConverTool {
             int lightDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 20, 22));
             int eyeMoveDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 22, 24));
             int soberDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 24, 26));
+            //int soberDuration = ByteUtil.getUnsignedShort(Arrays.copyOfRange(headBuff, 24, 26));
             NightSleepBean nightSleepHead = new NightSleepBean();
             nightSleepHead.setTotalSleepScore(totalSleepScore);
             nightSleepHead.setTotalSleepQualityScore(totalSleepQualityScore);
@@ -1272,6 +1345,12 @@ public class DataConverTool {
             nightSleepHead.setLightDuration(lightDuration);
             nightSleepHead.setEyeMoveDuration(eyeMoveDuration);
             nightSleepHead.setSoberDuration(soberDuration);
+
+            if (fileInfoBean.getFileVersionNumber() >= 2) {
+                short totalScoreFriendly = ByteUtil.getUnsignedChar(Arrays.copyOfRange(headBuff, 26, 27));
+                nightSleepHead.setTotalScoreFriendly(totalScoreFriendly);
+            }
+
             if (raf.read(fileContent) >= 5) {
                 nightSleepHead.setChangeOfTimeStamp(
                         ByteUtil.getUnsignedInt(Arrays.copyOfRange(fileContent, 0, 4)));
@@ -1325,7 +1404,7 @@ public class DataConverTool {
                 arrayList.add(averageDataBean);
             }
             raf.close();
-            getFileInfo().setRecordCount(recCount);
+            fileInfoBean.setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1340,10 +1419,10 @@ public class DataConverTool {
         int readRet = 0;
         long recCount = 0;
         final long fileSize = reportFile.length();
-        getFileInfo().setFileSize(fileSize);
-        getFileInfo().setFileType(" ");
-        getFileInfo().setTimeStamp(0);
-        getFileInfo().setVersion(" ");
+        fileInfoBean.setFileSize(fileSize);
+        fileInfoBean.setFileType(" ");
+        fileInfoBean.setTimeStamp(0);
+        fileInfoBean.setVersion(" ");
         if (fileSize <= 0) {
             return null;
         }
@@ -1359,7 +1438,7 @@ public class DataConverTool {
                 arrayList.add(dataBean);
             }
             raf.close();
-            getFileInfo().setRecordCount(recCount);
+            fileInfoBean.setRecordCount(recCount);
         } catch (IOException e) {
             e.printStackTrace();
         }

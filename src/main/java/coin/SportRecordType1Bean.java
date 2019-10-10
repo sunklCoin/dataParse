@@ -36,7 +36,8 @@ public class SportRecordType1Bean {
     private byte swCurrBarFreeCnt;
     private byte swCurrBarBackCnt;
     private byte swCurrBarButterflyCnt;
-
+    // v2.12
+    private int swAllCalorie;
 
     public SportRecordType1Bean() {
         this.initAltitude = "Invalid float value";
@@ -67,6 +68,7 @@ public class SportRecordType1Bean {
         this.swCurrBarFreeCnt = Byte.MIN_VALUE;
         this.swCurrBarBackCnt = Byte.MIN_VALUE;
         this.swCurrBarButterflyCnt = Byte.MIN_VALUE;
+        this.swAllCalorie = Integer.MIN_VALUE;
     }
 
     public void setDtString(long timeStamp) {
@@ -84,7 +86,7 @@ public class SportRecordType1Bean {
 
     public void setInitAltitude(float initAltitude) {
         //System.out.println(initAltitude);
-        String value = df2.format(initAltitude);
+        // String value = df2.format(initAltitude);
         //System.out.println(value);
         this.initAltitude = df2.format(initAltitude);
     }
@@ -339,5 +341,21 @@ public class SportRecordType1Bean {
 
     public void setSwTimeStamp(long swTimeStamp) {
         this.swTimeStamp = swTimeStamp;
+    }
+
+    /**
+     * @param swAllCalorie the swAllCalorie to set
+     */
+    public void setSwAllCalorie(int swAllCalorie) {
+        this.swAllCalorie = swAllCalorie;
+    }
+
+    /**
+     * @return the swAllCalorie
+     */
+    public String getSwAllCalorie() {
+        if (swAllCalorie == Integer.MIN_VALUE)
+            return "null";
+        return Integer.toString(swAllCalorie);
     }
 }
