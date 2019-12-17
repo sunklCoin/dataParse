@@ -3,13 +3,22 @@
     <output-path>$PROJECT_DIR$/out/artifacts/AlgoTool</output-path>
     <properties id="javafx-properties">
       <options>
+        <option name="alias" value="" />
         <option name="appClass" value="coin.Main" />
         <option name="description" value="" />
+        <option name="height" value="960" />
         <option name="htmlPlaceholderId" value="" />
+        <option name="icons">
+          <JavaFxApplicationIcons>
+            <option name="windowsIcon" value="$PROJECT_DIR$/Sunglasses_Smiley_128px.ico" />
+          </JavaFxApplicationIcons>
+        </option>
+        <option name="keystore" value="" />
         <option name="nativeBundle" value="all" />
         <option name="title" value="data parser" />
-        <option name="vendor" value="" />
-        <option name="version" value="" />
+        <option name="vendor" value="longcheer-sunkelong" />
+        <option name="version" value="20191009-2.13-v2.5" />
+        <option name="width" value="1280" />
       </options>
     </properties>
     <root id="root">
