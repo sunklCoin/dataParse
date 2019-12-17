@@ -45,6 +45,7 @@ public class Controller implements Initializable {
     private static final int NIGHT_SLEEP = 8;
     private static final int AVERAGE_DATA = 9;
     private static final int REC_TS_DATA = 10;
+    private static final int SLEEP_STATUS = 11;
     private String dataFilePath = null;
     private DirectoryChooser directoryChooser;
     private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
@@ -181,7 +182,7 @@ public class Controller implements Initializable {
                         f.getName().contains("gps") || f.getName().contains("profile") ||
                         f.getName().contains("distribute") || f.getName().contains("dsleep") ||
                         f.getName().contains("nsleep") || f.getName().contains("average")
-                        || f.getName().contains("rec_ts")) {
+                        || f.getName().contains("rec_ts") || f.getName().contains("sleep_status")) {
                     listFile.add(f.getPath());
                     //listFile.add(f.getAbsolutePath());
                     dataList.add(f.getPath());
@@ -218,6 +219,10 @@ public class Controller implements Initializable {
 
             if (filePathName.contains("nsleep")) {
                 return NIGHT_SLEEP;
+            }
+
+            if (filePathName.contains("sleep_status")) {
+                return SLEEP_STATUS;
             }
 
             if (filePathName.contains("average")) {
@@ -322,6 +327,14 @@ public class Controller implements Initializable {
                 loadRecordTimeStamp(data);
             }
             break;
+
+            case SLEEP_STATUS: {
+                ArrayList<SleepStatusBean> data = dataConverTool.parseSleepStatusBeanData(fileName);
+                FileInfoBean mFileInfoBean = dataConverTool.getFileInfo();
+                setFileInfoByBean(mFileInfoBean);
+                loadSleepStatus(data);
+            }
+            break;
         }
     }
 
@@ -343,6 +356,10 @@ public class Controller implements Initializable {
         list.addAll(mDailyRecordBeanList);
         tableView.getColumns().clear();
         int verNo = FileInfoBean.getInstance().getFileVersionNumber();
+        TableColumn index = new TableColumn("ID");
+        index.setCellValueFactory(new PropertyValueFactory<Object, Object>("index"));
+        tableView.getColumns().add(index);
+
         if (verNo == 1) {
             TableColumn hasSleepDataColumn = new TableColumn("是否包含睡眠数据");
             hasSleepDataColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("hasSleepData"));
@@ -437,6 +454,12 @@ public class Controller implements Initializable {
         everydayMaxStepColumn.setCellValueFactory(new PropertyValueFactory<Object, Object>("everydayMaxStep"));
         tableView.getColumns().addAll(heightColumn, weightColumn, birthdayColumn, genderColumn, vo2MaxColumn,
                 maxHeartRateColumn, minHisHRColumn, maxHisHRColumn, everydayMaxCalorieColumn, everydayMaxStepColumn);
+        int verNo = FileInfoBean.getInstance().getFileVersionNumber();
+        if (verNo >= 2) {
+            TableColumn maximal_met = new TableColumn("maximal_met");
+            maximal_met.setCellValueFactory(new PropertyValueFactory<Object, Object>("maximalMet"));
+            tableView.getColumns().add(maximal_met);
+        }
     }
 
     private void loadDailyReportData(DailyReportBean mDailyReportBean) {
@@ -645,6 +668,9 @@ public class Controller implements Initializable {
         list.addAll(mSportRecordList);
         tableView.getColumns().clear();
 
+        TableColumn index = new TableColumn("ID");
+        index.setCellValueFactory(new PropertyValueFactory<Object, Object>("index"));
+        tableView.getColumns().add(index);
 
         TableColumn recordCnt = new TableColumn("记录的数据条数");
         recordCnt.setCellValueFactory(new PropertyValueFactory<Object, Object>("recordCnt"));
@@ -782,6 +808,10 @@ public class Controller implements Initializable {
         //list.add(mDailyRecordBean);
         list.addAll(mGpsDataBeanList);
         tableView.getColumns().clear();
+
+        TableColumn index = new TableColumn("ID");
+        index.setCellValueFactory(new PropertyValueFactory<Object, Object>("index"));
+        tableView.getColumns().add(index);
 
         TableColumn timeStamp = new TableColumn("Unix时间戳");
         timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
@@ -937,5 +967,17 @@ public class Controller implements Initializable {
         TableColumn size = new TableColumn("Size");
         size.setCellValueFactory(new PropertyValueFactory<Object, Object>("size"));
         tableView.getColumns().addAll(timeStamp, size);
+    }
+
+    private void loadSleepStatus(ArrayList<SleepStatusBean> dataList) {
+        list.clear();
+        list.addAll(dataList);
+        tableView.getColumns().clear();
+        TableColumn timeStamp = new TableColumn("TimeStamp");
+        timeStamp.setCellValueFactory(new PropertyValueFactory<Object, Object>("timeStamp"));
+
+        TableColumn status = new TableColumn("Status");
+        status.setCellValueFactory(new PropertyValueFactory<Object, Object>("status"));
+        tableView.getColumns().addAll(timeStamp, status);
     }
 }

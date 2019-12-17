@@ -7,6 +7,7 @@ import java.util.TimeZone;
 
 public class DailyRecordBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private long index;
     /* 2 bytes
      * 15 bit hasSleepData
      * 14 bit hasExceptionHeart
@@ -76,6 +77,7 @@ public class DailyRecordBean {
     private long timeOfModem;
 
     public DailyRecordBean() {
+        this.index = Long.MIN_VALUE;
         this.hasSleepData = Byte.MIN_VALUE;
         this.hasExceptionHeart = Byte.MIN_VALUE;
         this.increaseStepCnt = Integer.MIN_VALUE;
@@ -284,6 +286,20 @@ public class DailyRecordBean {
         df.setTimeZone(timeZone);
         String tempStr = df.format(temp);
         return Long.toString(timeOfModem) + "\n" + tempStr;
+    }
+    
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(long index) {
+        this.index = index;
+    }
+
+    /**
+     * @return the index
+     */
+    public long getIndex() {
+        return index;
     }
 
     @Override

@@ -11,10 +11,11 @@ public class UserInfoBean {
     private int     maxHisHR            ;
     private int     everydayMaxCalorie  ;
     private int     everydayMaxStep     ;
+    private float   maximalMet          ; // 4 byte
 
     public UserInfoBean() {
         this.height                          = Short.MIN_VALUE;
-        this.weight                          = Long.MIN_VALUE;
+        this.weight                          = Float.MIN_VALUE;
         this.birthday                        = Long.MIN_VALUE; // 4 bytes
         this.gender                          = Short.MIN_VALUE; // 4 byte
         this.vo2Max                          = Short.MIN_VALUE; // 2 bytes
@@ -23,6 +24,7 @@ public class UserInfoBean {
         this.maxHisHR                        = Integer.MIN_VALUE; //4 bytes
         this.everydayMaxCalorie              = Integer.MIN_VALUE; //4 bytes
         this.everydayMaxStep                 = Integer.MIN_VALUE; // 2bytes
+        this.maximalMet                      = Float.MIN_VALUE;
     }
 
     public void setMaxHeartRate(int maxHeartRate) {
@@ -63,6 +65,10 @@ public class UserInfoBean {
 
     public void setMinHisHR(short minHisHR) {
         this.minHisHR = minHisHR;
+    }
+
+    public void setMaximalMet(float maximalMet) {
+        this.maximalMet = maximalMet;
     }
 
     public String getVo2Max() {
@@ -126,6 +132,12 @@ public class UserInfoBean {
         return Short.toString(minHisHR);
     }
 
+    public String getMaximalMet() {
+        if (maximalMet == Float.MIN_VALUE)
+            return "null";
+        return Float.toString(maximalMet);
+    }
+
     @Override
     public String toString() {
         return  "height                        = " + height                         + " \n" +
@@ -137,7 +149,8 @@ public class UserInfoBean {
                 "minHisHR                      = " + minHisHR                       + " \n" +
                 "maxHisHR                      = " + maxHisHR                       + " \n" +
                 "everydayMaxCalorie            = " + everydayMaxCalorie             + " \n" +
-                "everydayMaxStep               = " + everydayMaxStep                + " \n";
+                "everydayMaxStep               = " + everydayMaxStep                + " \n" +
+                "maximalMet                    = " + maximalMet                     + " \n";
     }
 }
 

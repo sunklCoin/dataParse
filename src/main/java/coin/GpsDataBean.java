@@ -10,11 +10,12 @@ public class GpsDataBean {
     private float lat;
     private float lon;
     private long timeStamp;
-
+    private long index;
     public GpsDataBean() {
         this.lat = Float.MIN_VALUE;
         this.lon = Float.MIN_VALUE;
         this.timeStamp = Long.MIN_VALUE;
+        this.index = Long.MIN_VALUE;
     }
 
     public String getLat() {
@@ -50,5 +51,19 @@ public class GpsDataBean {
 
     public void setTimeStamp(long timestamp) {
         this.timeStamp = timestamp;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(long index) {
+        this.index = index;
+    }
+
+    /**
+     * @return the index
+     */
+    public long getIndex() {
+        return index;
     }
 }
