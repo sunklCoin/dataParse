@@ -5,36 +5,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class GpsDataBean {
+public class SleepStatusBean {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private float lat;
-    private float lon;
     private long timeStamp;
-    private long index;
-    public GpsDataBean() {
-        this.lat = Float.MIN_VALUE;
-        this.lon = Float.MIN_VALUE;
+    private long status;
+    public SleepStatusBean() {
+        this.status = Long.MIN_VALUE;
         this.timeStamp = Long.MIN_VALUE;
-        this.index = Long.MIN_VALUE;
     }
 
-    public String getLat() {
-        String ret = String.format("%.7f",lat);
-
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        String ret = Long.toString(status);
         return ret;
     }
 
-    public void setLat(float lat) {
-        this.lat = lat;
-    }
-
-    public String getLon() {
-        String ret = String.format("%.7f",lon);
-        return ret;
-    }
-
-    public void setLon(float lon) {
-        this.lon = lon;
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(long status) {
+        this.status = status;
     }
 
     public String getTimeStamp() {
@@ -51,19 +43,5 @@ public class GpsDataBean {
 
     public void setTimeStamp(long timestamp) {
         this.timeStamp = timestamp;
-    }
-
-    /**
-     * @param index the index to set
-     */
-    public void setIndex(long index) {
-        this.index = index;
-    }
-
-    /**
-     * @return the index
-     */
-    public long getIndex() {
-        return index;
     }
 }

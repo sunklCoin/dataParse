@@ -9,6 +9,8 @@ import java.util.TimeZone;
 public class SportRecordType1Bean {
     public static final DecimalFormat df2 = new DecimalFormat( "0.00" );
     public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String INVALID_STRING = "invalid";
+    private long index;
     private String initAltitude;
     private long recordCnt;
     private long resumeTimeStamp;
@@ -69,10 +71,11 @@ public class SportRecordType1Bean {
         this.swCurrBarBackCnt = Byte.MIN_VALUE;
         this.swCurrBarButterflyCnt = Byte.MIN_VALUE;
         this.swAllCalorie = Integer.MIN_VALUE;
+        this.index = Long.MIN_VALUE;
     }
 
     public void setDtString(long timeStamp) {
-        Date date = new Date(resumeTimeStamp);
+        Date date = new Date(timeStamp);
         //String dtStr = df.format(date);
         TimeZone timeZone = TimeZone.getDefault();
         timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
@@ -110,13 +113,13 @@ public class SportRecordType1Bean {
 
     public String getRecordCnt() {
         if (recordCnt == Long.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Long.toString(recordCnt);
     }
 
     public String getResumeTimeStamp() {
         if (resumeTimeStamp == Long.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         Date date = new Date(resumeTimeStamp * 1000);
         TimeZone timeZone = TimeZone.getDefault();
         timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
@@ -159,49 +162,51 @@ public class SportRecordType1Bean {
 
     public String getHeartRate() {
         if (heartRate == Short.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Short.toString(heartRate);
     }
 
     public String getHeight() {
         if (height == Float.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Float.toString(height);
     }
 
     public String getHeightType() {
         if (heightType == Short.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Short.toString(heightType);
     }
 
     public String getIncreaseCalorie() {
         if (increaseCalorie == Short.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Short.toString(increaseCalorie);
     }
 
     public String getIncreaseStep() {
         if (increaseStep == Short.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Short.toString(increaseStep);
     }
 
     public String getIntergerKM() {
         if (intergerKM == Short.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Short.toString(intergerKM);
     }
 
     public String getIncreaseKm() {
         if (increaseKm == Float.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         return Float.toString(increaseKm);
     }
 
     public String getSwCurrBarBackCnt() {
         if (swCurrBarBackCnt == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarBackCnt == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarBackCnt & 0x00ff;
         return Integer.toString(ret);
     }
@@ -212,7 +217,9 @@ public class SportRecordType1Bean {
 
     public String getSwCurrBarBreastCnt() {
         if (swCurrBarBreastCnt == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarBreastCnt == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarBreastCnt & 0x00ff;
         return Integer.toString(ret);
     }
@@ -223,7 +230,9 @@ public class SportRecordType1Bean {
 
     public String getSwCurrBarButterflyCnt() {
         if (swCurrBarButterflyCnt == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarButterflyCnt == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarButterflyCnt & 0x00ff;
         return Integer.toString(ret);
     }
@@ -234,7 +243,9 @@ public class SportRecordType1Bean {
 
     public String getSwCurrBarFq() {
         if (swCurrBarFq == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarFq == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarFq & 0x00ff;
         return Integer.toString(ret);
     }
@@ -245,7 +256,9 @@ public class SportRecordType1Bean {
 
     public String getSwCurrBarFreeCnt() {
         if (swCurrBarFreeCnt == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarFreeCnt == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarFreeCnt & 0x00ff;
         return Integer.toString(ret);
     }
@@ -256,7 +269,9 @@ public class SportRecordType1Bean {
 
     public String getSwCurrBarUnKnowStrokeCnt() {
         if (swCurrBarUnKnowStrokeCnt == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swCurrBarUnKnowStrokeCnt == Byte.MIN_VALUE + 0x01)
+            return "-";
         int ret = swCurrBarUnKnowStrokeCnt & 0x00ff;
         return Integer.toString(ret);
     }
@@ -267,7 +282,7 @@ public class SportRecordType1Bean {
 
     public String getSwMainStroke() {
         if (swMainStroke == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         int ret = swMainStroke & 0x00ff;
         return Integer.toString(ret);
     }
@@ -278,9 +293,13 @@ public class SportRecordType1Bean {
 
     public String getSwRecordType() {
         if (swRecordType == Byte.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
         int ret = swRecordType & 0x00ff;
-        return Integer.toString(ret);
+        if (ret == 0x00) {
+            return Integer.toString(ret) + "(小节)";
+        } else {
+            return Integer.toString(ret) + "(段落)";
+        }
     }
 
     public void setSwRecordType(byte swRecordType) {
@@ -303,40 +322,61 @@ public class SportRecordType1Bean {
         this.swCurrBarSwolf = swCurrBarSwolf;
     }
 
-    public int getSwTotalCalorie() {
-        return swTotalCalorie;
+    public String getSwTotalCalorie() {
+        if (swTotalCalorie == Integer.MIN_VALUE)
+            return INVALID_STRING;
+        if (swTotalCalorie == Integer.MIN_VALUE + 1)
+            return "-";
+        return Integer.toString(swTotalCalorie);
     }
 
     public void setSwTotalCalorie(int swTotalCalorie) {
         this.swTotalCalorie = swTotalCalorie;
     }
 
-    public int getSwTotalKm() {
-        return swTotalKm;
+    public String getSwTotalKm() {
+        if (swTotalKm == Integer.MIN_VALUE)
+            return INVALID_STRING;
+        if (swTotalKm == Integer.MIN_VALUE + 1)
+            return "-";
+        return Integer.toString(swTotalKm);
     }
 
     public void setSwTotalKm(int swTotalKm) {
         this.swTotalKm = swTotalKm;
     }
 
-    public int getSwTotalStroke() {
-        return swTotalStroke;
+    public String getSwTotalStroke() {
+        if (swTotalStroke == Integer.MIN_VALUE)
+            return INVALID_STRING;
+        if (swTotalStroke == Integer.MIN_VALUE + 1)
+            return "-";
+        return Integer.toString(swTotalStroke);
     }
 
     public void setSwTotalStroke(int swTotalStroke) {
         this.swTotalStroke = swTotalStroke;
     }
 
-    public int getSwTotalTurn() {
-        return swTotalTurn;
+    public String getSwTotalTurn() {
+        if (swTotalTurn == Integer.MIN_VALUE)
+            return INVALID_STRING;
+        if (swTotalTurn == Integer.MIN_VALUE + 1)
+            return "-";
+        return Integer.toString(swTotalTurn);
     }
 
     public void setSwTotalTurn(int swTotalTurn) {
         this.swTotalTurn = swTotalTurn;
     }
 
-    public long getSwTimeStamp() {
-        return swTimeStamp;
+    public String getSwTimeStamp() {
+        Date date = new Date(swTimeStamp * 1000);
+        TimeZone timeZone = TimeZone.getDefault();
+        timeZone.setRawOffset(FileInfoBean.getInstance().getTimeZone() * 15 * 60 * 1000);
+        df.setTimeZone(timeZone);
+        String dtStr = df.format(date);
+        return Long.toString(swTimeStamp) + "\n" + dtStr;
     }
 
     public void setSwTimeStamp(long swTimeStamp) {
@@ -355,7 +395,23 @@ public class SportRecordType1Bean {
      */
     public String getSwAllCalorie() {
         if (swAllCalorie == Integer.MIN_VALUE)
-            return "null";
+            return INVALID_STRING;
+        if (swAllCalorie == Integer.MIN_VALUE + 1)
+            return "-";
         return Integer.toString(swAllCalorie);
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(long index) {
+        this.index = index;
+    }
+
+    /**
+     * @return the index
+     */
+    public long getIndex() {
+        return index;
     }
 }
