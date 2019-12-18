@@ -10,6 +10,11 @@ public class SportRecordType1Bean {
     public static final DecimalFormat df2 = new DecimalFormat( "0.00" );
     public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String INVALID_STRING = "invalid";
+    private static final int SWIMMING_STROKE_TYPE_UNKNOWN = 0;
+    private static final int SWIMMING_STROKE_TYPE_BREAST = 1;
+    private static final int SWIMMING_STROKE_TYPE_FREE = 2;
+    private static final int SWIMMING_STROKE_TYPE_BACK = 3;
+    private static final int SWIMMING_STROKE_TYPE_BUTTERFLY = 4;
     private long index;
     private String initAltitude;
     private long recordCnt;
@@ -284,7 +289,28 @@ public class SportRecordType1Bean {
         if (swMainStroke == Byte.MIN_VALUE)
             return INVALID_STRING;
         int ret = swMainStroke & 0x00ff;
-        return Integer.toString(ret);
+        String mainSwimTypeName = null;
+        switch(ret) {
+            case SWIMMING_STROKE_TYPE_UNKNOWN:
+                mainSwimTypeName = "混合泳";
+            break;
+            case SWIMMING_STROKE_TYPE_BREAST:
+                mainSwimTypeName = "蛙泳";
+            break;
+            case SWIMMING_STROKE_TYPE_FREE:
+                mainSwimTypeName = "自由泳";
+            break;
+            case SWIMMING_STROKE_TYPE_BACK:
+                mainSwimTypeName = "仰泳";
+            break;
+            case SWIMMING_STROKE_TYPE_BUTTERFLY:
+                mainSwimTypeName = "蝶泳";
+            break;
+            default:
+                mainSwimTypeName = "";
+            break;
+        }
+        return Integer.toString(ret) + "(" + mainSwimTypeName + ")";
     }
 
     public void setSwMainStroke(byte swMainStroke) {
