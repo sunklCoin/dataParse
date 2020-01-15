@@ -426,6 +426,12 @@ public class Controller implements Initializable {
             tableView.getColumns().add(timeOfAp);
             tableView.getColumns().add(timeOfModem);
         }
+        long statisticsStep = 0;
+        for (DailyRecordBean dailyRecordBeanList: mDailyRecordBeanList) {
+            System.out.println(" IncreaseStepCnt " + dailyRecordBeanList.getIncreaseStepCnt());
+            statisticsStep += Long.parseLong(dailyRecordBeanList.getIncreaseStepCnt());
+        }
+        System.out.println(" statisticsStep " + statisticsStep);
     }
 
     private void loadUserProfileData(UserInfoBean mUserInfoBean) {

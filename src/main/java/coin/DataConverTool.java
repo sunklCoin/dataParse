@@ -23,6 +23,7 @@ public class DataConverTool {
     public static final int DAILY_ACTIVITY_REPORT_FILE_SIZE = 25;
     public static final int DAILY_ACTIVITY_REPORT_FILE_SIZE_V2 = 29;
     public static final int USER_PROFLE_FILE_SIZE = 20;
+    public static final int USER_PROFLE_FILE_SIZE_V2 = 24;
     public static final int DAILY_RECORD_DYNAMIC_BUFF_MAX_SIZE = 11;
     public static final int DAILY_RECORD_DYNAMIC_BUFF_MIN_SIZE = 10;
 
@@ -607,7 +608,11 @@ public class DataConverTool {
 
     public UserInfoBean parseUserProfile(String file) {
         FileInfoBean fileInfoBean = ParserFileInfo(file, USER_PROFILE_TYPE);
-        final int byteSize = USER_PROFLE_FILE_SIZE;
+        int extraByte = 0;
+        if (getFileInfo().getFileVersionNumber() >= 2) {
+            extraByte = USER_PROFLE_FILE_SIZE_V2 - USER_PROFLE_FILE_SIZE;
+        }
+        final int byteSize = USER_PROFLE_FILE_SIZE + extraByte;
         // if (byteSize == 0) {
         //     return null;
         // }
